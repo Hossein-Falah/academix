@@ -1,34 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Response } from 'express';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { AuthDto, CheckOtpDto } from './dto/auth.dto';
 
 @Controller('auth')
+@ApiTags("Auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post("/user-existence")
+  @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
+  userExistence(@Body() authDto: AuthDto, @Res() res:Response) {
+    return this.authService.userExistence(authDto, res);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post("/check-otp")
+  @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
+  checkOtp(@Body() checkOtpDto:CheckOtpDto) {
+    return this.authService.checkOtp(checkOtpDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Get("/check-login")
+  checkLogin() {
+    return this.authService.checkLogin();
   }
 }

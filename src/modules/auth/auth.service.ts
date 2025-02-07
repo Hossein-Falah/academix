@@ -1,26 +1,136 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Response } from 'express';
+import { Repository } from 'typeorm';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthDto, CheckOtpDto } from './dto/auth.dto';
+import { UserEntity } from '../user/entities/user.entity';
+import { AuthResponse } from 'src/common/types';
+import { AuthType } from 'src/common/enums/type.enum';
+import { AuthMessage, BadRequestMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { AuthMethod } from 'src/common/enums/method.enum';
+import { isEmail, isMobilePhone } from 'class-validator';
+import { randomInt } from 'crypto';
+import { OtpEntity } from '../user/entities/otp.entity';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+    constructor(
+        @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
+        @InjectRepository(OtpEntity) private otpRepository: Repository<OtpEntity>,
+        private tokenService:TokenService
+    ) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+    async userExistence(authDto:AuthDto, res:Response) {
+        const { method, type, username } = authDto;
+        let result:AuthResponse;
+        
+        switch (type) {
+            case AuthType.Login:
+                result = await this.login(method, username);
+                return this.sendResponse(res, result);
+            case AuthType.Register:
+                result = await this.register(method, username);
+                return this.sendResponse(res, result);
+            default:
+                throw new UnauthorizedException(AuthMessage.UnAuthorizedInValid);
+        }
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    async login(method:AuthMethod, username:string) {
+        const validUsername = this.usernameValidator(method, username);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+        let user = await this.checkExistUser(method, validUsername);
+        if (!user) throw new NotFoundException(PublicMessage.NotFoundAccount);
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
+        const otp = await this.sendOtp(user.id, method);
+        const token = this.tokenService.generateOtpToken({ userId: user.id });
+
+        return {
+            code: otp.code,
+            token
+        }
+    }
+
+    async register(method:AuthMethod, username:string) {
+        return {
+            token: "",
+            code:""
+        }
+    }
+
+    async sendOtp(userId:string, method:AuthMethod) {
+        const code = randomInt(10000, 99999).toString();
+        const expiresIn = new Date(Date.now() + (1000 * 60 * 2));
+
+        let otp = await this.otpRepository.findOneBy({ userId });
+        let existOtp = false;
+
+        if (otp) {
+            existOtp = true;
+            otp.code = code;
+            otp.expiresIn = expiresIn;
+            otp.method = method;
+        } else {
+            otp = this.otpRepository.create({
+                code,
+                expiresIn,
+                userId,
+                method
+            });
+        }
+
+        otp = await this.otpRepository.save(otp);
+
+        if (!existOtp) {
+            await this.userRepository.update({ id: userId }, {
+                otpId: otp.id
+            })
+        };
+
+        return otp;
+    }
+
+    checkOtp(checkOtpDto:CheckOtpDto) {
+
+    }
+
+    async sendResponse(res:Response, result:AuthResponse) {
+
+    }
+
+    checkLogin() {
+
+    }
+
+    async checkExistUser(method:AuthMethod, username:string) {
+        let user:UserEntity;
+
+        if (method === AuthMethod.Phone) {
+            user = await this.userRepository.findOneBy({ phone: username })
+        } else if (method === AuthMethod.Email) {
+            user = await this.userRepository.findOneBy({ email: username })
+        } else if (method === AuthMethod.Username) {
+            user = await this.userRepository.findOneBy({ username: username })
+        } else {
+            throw new BadRequestException(BadRequestMessage.InValid)
+        }
+
+        return user;
+    }
+
+    usernameValidator(method:AuthMethod, username:string) {
+        switch (method) {
+            case AuthMethod.Email:
+                if (isEmail(username)) return username;
+                throw new BadRequestException(BadRequestMessage.InValidEmail)
+            case AuthMethod.Phone:
+                if (isMobilePhone(username, 'fa-IR')) return username;
+                throw new BadRequestException(BadRequestMessage.InValidPhoen);
+            case AuthMethod.Username:
+                return username;
+            default:
+                throw new UnauthorizedException(AuthMessage.UnAuthorizedInValid)
+        }
+    }
 }
