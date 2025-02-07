@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { Repository } from 'typeorm';
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthDto, CheckOtpDto } from './dto/auth.dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { AuthResponse } from 'src/common/types';
 import { AuthType } from 'src/common/enums/type.enum';
-import { AuthMessage, BadRequestMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { AuthMessage, BadRequestMessage, ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { AuthMethod } from 'src/common/enums/method.enum';
 import { isEmail, isMobilePhone } from 'class-validator';
 import { randomInt } from 'crypto';
@@ -53,9 +53,28 @@ export class AuthService {
     }
 
     async register(method:AuthMethod, username:string) {
+        const validUsername = this.usernameValidator(method, username);
+
+        let user = await this.checkExistUser(method, validUsername);
+        if (user) throw new ConflictException(ConflictMessage.AlreadyExistAccount);
+
+        if (method === AuthMethod.Username) {
+            throw new BadRequestException(BadRequestMessage.InValid);
+        }
+
+        user = this.userRepository.create({
+            [method]: username
+        });
+
+        user = await this.userRepository.save(user);
+        user.username = `m_${user.id}`;
+        user = await this.userRepository.save(user);
+        const otp = await this.sendOtp(user.id, method);
+        const token = this.tokenService.generateOtpToken({ userId: user.id })
+
         return {
-            token: "",
-            code:""
+            code: otp.code,
+            token
         }
     }
 
