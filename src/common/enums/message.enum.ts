@@ -1,9 +1,15 @@
 export enum PublicMessage {
     NotFoundAccount="اکانت مورد نظر پیدا نشد",
+    LoggedIn="با موفقعیت وارد حساب کاربری خود شدید"
 }
 
 export enum AuthMessage {
-    UnAuthorizedInValid="روش احراز هویت نامعتبر است"
+    UnAuthorizedInValid="روش احراز هویت نامعتبر است",
+    ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",
+    TryAgain="لطفا مجددا تلاش کنید",
+    LoginAgain="لطفا مجددا وارد حساب کاربری خود شوید",
+    InValidCodeOtp="کد تایید اشتباه می باشد",
+    SendOtp="کد تایید با موفقعیت ارسال شد"
 }
 
 export enum BadRequestMessage {

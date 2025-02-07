@@ -6,3 +6,15 @@ export type AuthResponse = {
     code:string;
     token:string;
 }
+
+export type AccessTokenPayload = {
+    userId: number;
+};
+
+export type EmailTokenPayload = {
+    email: string;
+};
+
+export type PhoneTokenPayload = {
+    phone: string;
+};

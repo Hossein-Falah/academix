@@ -11,6 +11,9 @@ namespace NodeJS {
         DB_HOST:string;
 
         // secret key
+        ACCESS_TOKEN_SECRET:string;
         OTP_TOKEN_SECRET:string;
+
+        COOKIE_SECRET:string;
     }
 }
