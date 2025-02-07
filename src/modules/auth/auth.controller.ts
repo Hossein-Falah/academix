@@ -19,11 +19,11 @@ export class AuthController {
   @Post("/check-otp")
   @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
   checkOtp(@Body() checkOtpDto:CheckOtpDto) {
-    return this.authService.checkOtp(checkOtpDto);
+    return this.authService.checkOtp(checkOtpDto.code);
   }
 
   @Get("/check-login")
   checkLogin() {
-    return this.authService.checkLogin();
+    
   }
 }

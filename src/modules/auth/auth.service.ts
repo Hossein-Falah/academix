@@ -119,6 +119,7 @@ export class AuthService {
         if (!token) throw new UnauthorizedException(AuthMessage.ExpiredCode);
 
         const { userId } = this.tokenService.verifyOtpToken(token);
+
         const otp = await this.otpRepository.findOneBy({ userId });
         if (!otp) throw new UnauthorizedException(AuthMessage.LoginAgain);
 
@@ -127,8 +128,8 @@ export class AuthService {
         if (otp.expiresIn < now) throw new UnauthorizedException(AuthMessage.ExpiredCode);
         if (otp.code !== code) throw new BadRequestException(AuthMessage.InValidCodeOtp);
 
-
-        const accessToken = this.tokenService.verifyOtpToken(token);
+        const accessToken = this.tokenService.generateAccessToken({ userId });
+        
         if (otp.method === AuthMethod.Email) {
             await this.userRepository.update({ id: userId }, {
                 verify_email: true

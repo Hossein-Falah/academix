@@ -8,7 +8,7 @@ export type AuthResponse = {
 }
 
 export type AccessTokenPayload = {
-    userId: number;
+    userId: string;
 };
 
 export type EmailTokenPayload = {
