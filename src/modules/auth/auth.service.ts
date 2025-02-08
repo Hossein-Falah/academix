@@ -15,6 +15,7 @@ import { OtpEntity } from '../user/entities/otp.entity';
 import { TokenService } from './token.service';
 import { CookieKeys } from 'src/common/enums/cookie.enum';
 import { CookiesOptionsToken } from 'src/common/utils/cookie.util';
+import { Roles } from 'src/common/enums/role.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
@@ -60,8 +61,11 @@ export class AuthService {
             throw new BadRequestException(BadRequestMessage.InValid);
         }
 
+        const userCount = await this.userRepository.count();
+
         user = this.userRepository.create({
-            [method]: username
+            [method]: username,
+            role: userCount === 0 ? Roles.Admin : Roles.User
         });
 
         user = await this.userRepository.save(user);
