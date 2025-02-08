@@ -6,7 +6,7 @@ import { AuthType } from "src/common/enums/type.enum";
 export class AuthDto {
     @ApiProperty()
     @IsString()
-    @Length(3, 20)
+    @Length(3, 30)
     username:string;
     @ApiProperty({ enum: AuthType })
     @IsEnum(AuthType)

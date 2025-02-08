@@ -3,12 +3,12 @@ import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, Scope, UnauthorizedException } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { AuthResponse } from 'src/common/types';
 import { AuthType } from 'src/common/enums/type.enum';
-import { AuthMessage, BadRequestMessage, ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { AuthMessage, BadRequestMessage, ConflictMessage, ForbiddenMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { AuthMethod } from 'src/common/enums/method.enum';
 import { isEmail, isMobilePhone } from 'class-validator';
 import { OtpEntity } from '../user/entities/otp.entity';
@@ -47,13 +47,7 @@ export class AuthService {
         let user = await this.checkExistUser(method, validUsername);
         if (!user) throw new NotFoundException(PublicMessage.NotFoundAccount);
 
-        const otp = await this.sendOtp(user.id, method);
-        const token = this.tokenService.generateOtpToken({ userId: user.id });
-
-        return {
-            code: otp.code,
-            token
-        }
+        return this.handleOtpProccess(user.id, method);
     }
 
     async register(method:AuthMethod, username:string) {
@@ -73,13 +67,8 @@ export class AuthService {
         user = await this.userRepository.save(user);
         user.username = `m_${user.id}`;
         user = await this.userRepository.save(user);
-        const otp = await this.sendOtp(user.id, method);
-        const token = this.tokenService.generateOtpToken({ userId: user.id })
 
-        return {
-            code: otp.code,
-            token
-        }
+        return this.handleOtpProccess(user.id, method);
     }
 
     async sendOtp(userId:string, method:AuthMethod) {
@@ -112,6 +101,25 @@ export class AuthService {
         };
 
         return otp;
+    }
+
+
+    async handleOtpProccess(userId:string, method: AuthMethod) {
+        const now = new Date().getTime();
+
+        const lastOtp = await this.otpRepository.findOne({
+            where: { userId, method }
+        })
+        
+        if (lastOtp?.expiresIn?.getTime() > now) throw new ForbiddenException(ForbiddenMessage.NotExpiredOtpCode);
+        
+        const otp = await this.sendOtp(userId, method);
+        const token = this.tokenService.generateOtpToken({ userId });
+
+        return {
+            code: otp?.code,
+            token
+        }
     }
 
     async checkOtp(code:string) {

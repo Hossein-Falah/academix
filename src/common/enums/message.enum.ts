@@ -21,3 +21,7 @@ export enum BadRequestMessage {
 export enum ConflictMessage {
     AlreadyExistAccount="حساب کاربری با این مشخصات قبلا وجود دارد"
 }
+
+export enum ForbiddenMessage {
+    NotExpiredOtpCode="کد تایید شما هنوز منقضی نشده"
+}
