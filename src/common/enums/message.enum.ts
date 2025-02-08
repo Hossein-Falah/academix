@@ -9,7 +9,9 @@ export enum AuthMessage {
     TryAgain="لطفا مجددا تلاش کنید",
     LoginAgain="لطفا مجددا وارد حساب کاربری خود شوید",
     InValidCodeOtp="کد تایید اشتباه می باشد",
-    SendOtp="کد تایید با موفقعیت ارسال شد"
+    SendOtp="کد تایید با موفقعیت ارسال شد",
+    LoginRequired="لطفا وارد حساب کاربری خود شوید",
+    Blocked="حساب کاربری شما مسدود شد لطفا با پشتیبانی در تماس باشید"
 }
 
 export enum BadRequestMessage {

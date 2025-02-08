@@ -69,7 +69,7 @@ export class AuthService {
         });
 
         user = await this.userRepository.save(user);
-        user.username = `m_${user.id}`;
+        user.username = `m_${randomInt(5000).toString(32)}`;
         user = await this.userRepository.save(user);
 
         return this.handleOtpProccess(user.id, method);
@@ -166,6 +166,13 @@ export class AuthService {
             message: AuthMessage.SendOtp,
             code
         })
+    }
+
+    async validateAccessToken(token:string) {
+        const { userId } = this.tokenService.verifyAccessToken(token);
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) throw new UnauthorizedException(AuthMessage.LoginAgain);
+        return user;
     }
 
     async checkExistUser(method:AuthMethod, username:string) {
