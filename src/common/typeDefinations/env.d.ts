@@ -15,5 +15,10 @@ namespace NodeJS {
         OTP_TOKEN_SECRET:string;
 
         COOKIE_SECRET:string;
+
+        //google oauth
+        GOOGLE_CLIENT_ID:string;
+        GOOGLE_CIIENT_SECRET:string;
+        GOOGLE_CLLBACK_URL:string;
     }
 }

@@ -18,3 +18,11 @@ export type EmailTokenPayload = {
 export type PhoneTokenPayload = {
     phone: string;
 };
+
+export type GoogleStrategyType = {
+    firstName?: string,
+    lastName?: string,
+    email: string,
+    image_profile?: string,
+    accessToken?: string
+}

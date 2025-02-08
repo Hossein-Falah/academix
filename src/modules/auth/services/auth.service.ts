@@ -4,24 +4,27 @@ import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, Scope, UnauthorizedException } from '@nestjs/common';
-import { AuthDto } from './dto/auth.dto';
-import { UserEntity } from '../user/entities/user.entity';
-import { AuthResponse } from 'src/common/types';
+import { AuthDto } from '../dto/auth.dto';
+import { UserEntity } from '../../user/entities/user.entity';
+import { AuthResponse, GoogleStrategyType } from 'src/common/types';
 import { AuthType } from 'src/common/enums/type.enum';
 import { AuthMessage, BadRequestMessage, ConflictMessage, ForbiddenMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { AuthMethod } from 'src/common/enums/method.enum';
 import { isEmail, isMobilePhone } from 'class-validator';
-import { OtpEntity } from '../user/entities/otp.entity';
+import { OtpEntity } from '../../user/entities/otp.entity';
 import { TokenService } from './token.service';
 import { CookieKeys } from 'src/common/enums/cookie.enum';
 import { CookiesOptionsToken } from 'src/common/utils/cookie.util';
 import { Roles } from 'src/common/enums/role.enum';
+import { ProfileEntity } from 'src/modules/user/entities/profile.entity';
+import { randomId } from 'src/common/utils/function.util';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
     constructor(
         @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
         @InjectRepository(OtpEntity) private otpRepository: Repository<OtpEntity>,
+        @InjectRepository(ProfileEntity) private profileRepository: Repository<ProfileEntity>,
         @Inject(REQUEST) private request:Request,
         private tokenService:TokenService
     ) {}
@@ -166,6 +169,41 @@ export class AuthService {
             message: AuthMessage.SendOtp,
             code
         })
+    }
+
+    async googleAuth(userData:GoogleStrategyType) {
+        let token:string;
+
+        const { firstName, lastName, email, image_profile } = userData;
+        
+        let user = await this.userRepository.findOneBy({ email });
+        
+        if (user) {
+            token = this.tokenService.generateOtpToken({ userId: user.id });
+        } else {
+            user = this.userRepository.create({
+                email,
+                verify_email: true,
+                username: `${email.split("@")[0]}-${randomId()}`
+            })
+
+            user = await this.userRepository.save(user);
+
+            let profile = this.profileRepository.create({
+                userId: user.id,
+                nike_name: `${firstName} ${lastName}`,
+                image_profile
+            });
+            profile = await this.profileRepository.save(profile);
+            user.profileId = profile.id;
+            await this.userRepository.save(user);
+            
+            token = this.tokenService.generateAccessToken({ userId: user.id })
+        }
+
+        return {
+            token
+        }
     }
 
     async validateAccessToken(token:string) {
