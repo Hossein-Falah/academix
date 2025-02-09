@@ -13,6 +13,8 @@ namespace NodeJS {
         // secret key
         ACCESS_TOKEN_SECRET:string;
         OTP_TOKEN_SECRET:string;
+        EMAIL_TOKEN_SECRET:string;
+        PHONE_TOKEN_SECRET:string;
 
         COOKIE_SECRET:string;
 

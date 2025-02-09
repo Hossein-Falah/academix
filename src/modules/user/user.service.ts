@@ -3,24 +3,32 @@ import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { isDate } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { ProfileDto } from './dto/profile.dto';
 import { ProfileImage } from 'src/common/types';
 import { UserEntity } from './entities/user.entity';
 import { ProfileEntity } from './entities/profile.entity';
 import { Gender } from 'src/common/enums/gender.enum';
-import { AuthMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { AuthMessage, BadRequestMessage, ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { EntityNames } from 'src/common/enums/entity.enum';
 import { BaseEntity } from 'src/common/abstracts/base.entity';
 import { UserBlockDto } from '../auth/dto/auth.dto';
 import { UserStatus } from 'src/common/enums/status.enum';
+import { AuthService } from '../auth/services/auth.service';
+import { AuthMethod } from 'src/common/enums/method.enum';
+import { TokenService } from '../auth/services/token.service';
+import { CookieKeys } from 'src/common/enums/cookie.enum';
+import { OtpEntity } from './entities/otp.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
   constructor(
     @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
     @InjectRepository(ProfileEntity) private profileRepository: Repository<ProfileEntity>,
-    @Inject(REQUEST) private request:Request
+    @InjectRepository(OtpEntity) private otpRepository: Repository<OtpEntity>,
+    @Inject(REQUEST) private request:Request,
+    private authService:AuthService,
+    private tokenService:TokenService
   ) {}
 
   async changeProfile(files:ProfileImage, profileDto: ProfileDto) {
@@ -77,7 +85,7 @@ export class UserService {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException(PublicMessage.NotFound);
 
-    let message = AuthMessage.Blocked;
+    let message = AuthMessage.UserBlock;
 
     if (user.status === UserStatus.Block) {
       message = AuthMessage.UnBlock;
@@ -89,5 +97,64 @@ export class UserService {
     return {
       message
     }
+  }
+
+  async changeEmail(email:string) {
+    const { id } = this.request.user;
+
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (user && user?.id !== id) {
+      throw new ConflictException(ConflictMessage.AlreadyEmail);
+    } else if (user && user.id === id) {
+      return {
+        message: PublicMessage.Updated
+      }
+    }
+
+    await this.userRepository.update({ id }, { new_email: email });
+    const otp = await this.authService.sendOtp(id, AuthMethod.Email);
+    const token = this.tokenService.generateEmailToken({ email });
+
+    return {
+      code: otp.code,
+      token
+    }
+  }
+
+  async verifyEmail(code:string) {
+    const { id:userId, new_email } = this.request.user;
+    const token = this.request.cookies?.[CookieKeys.EmailOTP];    
+    if (!token) throw new BadRequestException(AuthMessage.ExpiredCode);
+    const { email } = this.tokenService.verifyEmailToken(token);
+    if (email !== new_email) {
+      throw new BadRequestException(BadRequestMessage.SomeThingWrong);
+    }
+
+    const otp = await this.checkOtp(userId, code);
+    
+    if (otp.method !== AuthMethod.Email) {
+      throw new BadRequestException(BadRequestMessage.SomeThingWrong);
+    }
+
+    await this.userRepository.update({ id: userId }, {
+      email,
+      verify_email: true,
+      new_email: null
+    })
+
+    return {
+      message: PublicMessage.Updated
+    }
+  }
+
+  async checkOtp(userId:string, code:string) {    
+    const otp = await this.otpRepository.findOneBy({ userId });
+    if (!otp) throw new BadRequestException(PublicMessage.NotFoundAccount);
+    const now = new Date();
+    if (otp.expiresIn < now) throw new BadRequestException(AuthMessage.ExpiredCode);
+    if (otp.code !== code) throw new BadRequestException(AuthMessage.InValidCodeOtp);
+
+    return otp
   }
 }
