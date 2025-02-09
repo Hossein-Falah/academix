@@ -34,7 +34,7 @@ export class AuthGuard implements CanActivate {
     protected extractToken(request:Request) {
         const { authorization } = request.headers;
         if (!authorization || authorization?.trim() === "") {
-            throw new UnauthorizedException(AuthMessage.TryAgain);
+            throw new UnauthorizedException(AuthMessage.LoginRequired);
         }
 
         const [bearer, token] = authorization.split(" ");

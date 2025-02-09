@@ -1,6 +1,7 @@
 export enum PublicMessage {
     NotFoundAccount="اکانت مورد نظر پیدا نشد",
-    LoggedIn="با موفقعیت وارد حساب کاربری خود شدید"
+    LoggedIn="با موفقعیت وارد حساب کاربری خود شدید",
+    Updated="اطلاعات با موفقعیت ویرایش شد"
 }
 
 export enum AuthMessage {
@@ -25,5 +26,12 @@ export enum ConflictMessage {
 }
 
 export enum ForbiddenMessage {
-    NotExpiredOtpCode="کد تایید شما هنوز منقضی نشده"
+    NotExpiredOtpCode="کد تایید شما هنوز منقضی نشده",
+    AccessDenied="دسترسی شما رد شد"
+}
+
+export enum ValidationMessage {
+    InValidImageFormat="فرمت تصویر نامعتبر می باشد فقط فرومت های png, jpg قابل قبول است",
+    InValidEmailFormat="فرمت ایمیل وارد شده صحیح نمی باشد",
+    InValidPhoneFormat="شماره همراه وارد شده صحیح نمی باشد"
 }
