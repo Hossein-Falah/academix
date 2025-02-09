@@ -1,7 +1,8 @@
 export enum PublicMessage {
     NotFoundAccount="اکانت مورد نظر پیدا نشد",
     LoggedIn="با موفقعیت وارد حساب کاربری خود شدید",
-    Updated="اطلاعات با موفقعیت ویرایش شد"
+    Updated="اطلاعات با موفقعیت ویرایش شد",
+    NotFound="اطلاعات مورد نظر یافت نشد"
 }
 
 export enum AuthMessage {
@@ -12,7 +13,8 @@ export enum AuthMessage {
     InValidCodeOtp="کد تایید اشتباه می باشد",
     SendOtp="کد تایید با موفقعیت ارسال شد",
     LoginRequired="لطفا وارد حساب کاربری خود شوید",
-    Blocked="حساب کاربری شما مسدود شد لطفا با پشتیبانی در تماس باشید"
+    Blocked="حساب کاربری شما مسدود شد لطفا با پشتیبانی در تماس باشید",
+    UnBlock="حساب کاربری شما رفع مسدود شد"
 }
 
 export enum BadRequestMessage {

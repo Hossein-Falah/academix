@@ -1,17 +1,19 @@
 import { Request } from 'express';
 import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
+import { isDate } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable, Scope } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { ProfileDto } from './dto/profile.dto';
 import { ProfileImage } from 'src/common/types';
 import { UserEntity } from './entities/user.entity';
 import { ProfileEntity } from './entities/profile.entity';
-import { isDate } from 'class-validator';
 import { Gender } from 'src/common/enums/gender.enum';
-import { PublicMessage } from 'src/common/enums/message.enum';
+import { AuthMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { EntityNames } from 'src/common/enums/entity.enum';
 import { BaseEntity } from 'src/common/abstracts/base.entity';
+import { UserBlockDto } from '../auth/dto/auth.dto';
+import { UserStatus } from 'src/common/enums/status.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -67,5 +69,25 @@ export class UserService {
       .where({ id })
       .leftJoinAndSelect("user.profile", "profile")
       .getOne()
+  }
+
+  async blockToggle(blockDto:UserBlockDto) {
+    const { userId } = blockDto;
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException(PublicMessage.NotFound);
+
+    let message = AuthMessage.Blocked;
+
+    if (user.status === UserStatus.Block) {
+      message = AuthMessage.UnBlock;
+      await this.userRepository.update({ id: userId }, { status: null })
+    } else {
+      await this.userRepository.update({ id: userId }, { status: UserStatus.Block });
+    }
+
+    return {
+      message
+    }
   }
 }
