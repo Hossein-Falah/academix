@@ -1,5 +1,5 @@
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Put, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Put, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
@@ -28,5 +28,10 @@ export class UserController {
     @Body() profileDto:ProfileDto
   ) {
     return this.userService.changeProfile(files, profileDto);
+  }
+
+  @Get('/profile')
+  getProfile() {
+    return this.userService.getProfile();
   }
 }
