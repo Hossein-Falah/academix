@@ -1,11 +1,11 @@
 import { Response } from 'express';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Body, Controller, Get, Patch, Post, Put, Res, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Res, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
-import { ChangeEmailDto, changePhoneDto, ProfileDto } from './dto/profile.dto';
+import { ChangeEmailDto, changePhoneDto, ProfileDto, RoleChangeDto } from './dto/profile.dto';
 import { multerStorage } from 'src/common/utils/multer.util';
 import { UploadedOptionalFiles } from 'src/common/decorators/upload-file.decorator';
 import { ProfileImage } from 'src/common/types';
@@ -43,13 +43,13 @@ export class UserController {
   }
 
   @Get("/users")
-  @CanAccess(Roles.Admin)
+  @CanAccess(Roles.Admin, Roles.Teacher)
   getAllUsers() {
     return this.userService.getAllUsers()
   }
 
   @Post('/block')
-  @CanAccess(Roles.Admin)
+  @CanAccess(Roles.Admin, Roles.Teacher)
   @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
   async blockToggle(@Body() blockDto:UserBlockDto) {
     return this.userService.blockToggle(blockDto)
@@ -87,5 +87,16 @@ export class UserController {
     return this.userService.verifyPhone(otpDto.code);
   }
 
-  // change role user just change admin
+  @Put("/change-role/:id")
+  @CanAccess(Roles.Admin)
+  @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
+  changeRole(@Param('id') id:string, @Body() roleChangeDto: RoleChangeDto) {
+    return this.userService.changeRole(id, roleChangeDto)
+  }
+
+  @Delete("/:id")
+  @CanAccess(Roles.Admin)
+  delete(@Param('id') id:string) {
+    return this.userService.delete(id)
+  }
 }

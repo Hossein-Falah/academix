@@ -4,7 +4,7 @@ import { REQUEST } from '@nestjs/core';
 import { isDate } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { ProfileDto } from './dto/profile.dto';
+import { ProfileDto, RoleChangeDto } from './dto/profile.dto';
 import { ProfileImage } from 'src/common/types';
 import { UserEntity } from './entities/user.entity';
 import { ProfileEntity } from './entities/profile.entity';
@@ -211,5 +211,27 @@ export class UserService {
     if (otp.code !== code) throw new BadRequestException(AuthMessage.InValidCodeOtp);
 
     return otp
+  }
+
+  async changeRole(id:string, roleChangeDto: RoleChangeDto) {
+    let user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException(PublicMessage.NotFoundAccount);
+
+    await this.userRepository.update({ id }, { role: roleChangeDto.role });
+
+    return {
+      message: PublicMessage.Updated
+    }
+  }
+
+  async delete(id:string) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException(PublicMessage.NotFoundAccount);
+
+    await this.userRepository.delete({ id });
+
+    return {
+      message: PublicMessage.DeletedAccount
+    }
   }
 }

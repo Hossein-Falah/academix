@@ -3,7 +3,8 @@ export enum PublicMessage {
     LoggedIn="با موفقعیت وارد حساب کاربری خود شدید",
     Updated="اطلاعات با موفقعیت ویرایش شد",
     NotFound="اطلاعات مورد نظر یافت نشد",
-    SendOTP="کد تایید با موفقعیت ارسال شد"
+    SendOTP="کد تایید با موفقعیت ارسال شد",
+    DeletedAccount="اکانت کاربر با موفقعیت حذف شد"
 }
 
 export enum AuthMessage {
