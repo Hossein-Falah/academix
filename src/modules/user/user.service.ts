@@ -79,6 +79,12 @@ export class UserService {
       .getOne()
   }
 
+  async getAllUsers() {
+    return this.userRepository.find({
+      where: {}
+    })
+  }
+
   async blockToggle(blockDto:UserBlockDto) {
     const { userId } = blockDto;
 

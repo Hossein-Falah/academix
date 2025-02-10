@@ -42,6 +42,12 @@ export class UserController {
     return this.userService.getProfile();
   }
 
+  @Get("/users")
+  @CanAccess(Roles.Admin)
+  getAllUsers() {
+    return this.userService.getAllUsers()
+  }
+
   @Post('/block')
   @CanAccess(Roles.Admin)
   @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
