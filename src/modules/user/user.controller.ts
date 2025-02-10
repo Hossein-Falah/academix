@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Res, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Res, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
