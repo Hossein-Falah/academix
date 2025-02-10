@@ -28,7 +28,8 @@ export enum BadRequestMessage {
 
 export enum ConflictMessage {
     AlreadyExistAccount="حساب کاربری با این مشخصات قبلا وجود دارد",
-    AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده"
+    AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
+    AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده"
 }
 
 export enum ForbiddenMessage {

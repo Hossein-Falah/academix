@@ -5,7 +5,7 @@ import { Body, Controller, Get, Patch, Post, Put, Res, UseInterceptors } from '@
 import { UserService } from './user.service';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
-import { ChangeEmailDto, ProfileDto } from './dto/profile.dto';
+import { ChangeEmailDto, changePhoneDto, ProfileDto } from './dto/profile.dto';
 import { multerStorage } from 'src/common/utils/multer.util';
 import { UploadedOptionalFiles } from 'src/common/decorators/upload-file.decorator';
 import { ProfileImage } from 'src/common/types';
@@ -70,4 +70,22 @@ export class UserController {
   verifyEmail(@Body() otpDto:CheckOtpDto) {
     return this.userService.verifyEmail(otpDto.code)
   }
+
+  @Patch("/change-phone")
+  async changePhone(@Body() phoneDto:changePhoneDto, @Res() res:Response) {
+    const { code, token, message } = await this.userService.changePhone(phoneDto.phone);
+    if (message) return res.json({ message });
+    res.cookie(CookieKeys.PhoneOTP, token, CookiesOptionsToken());
+    res.json({
+      code,
+      message: PublicMessage.SendOTP
+    })
+  }
+
+  @Post('/verify-phone-otp')
+  verifyPhone(@Body() otpDto:CheckOtpDto) {
+    return this.userService.verifyPhone(otpDto.code);
+  }
+
+  // change role user just change admin
 }
