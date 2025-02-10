@@ -1,3 +1,5 @@
+import { MulterFile } from "../utils/multer.util";
+
 export type CookiePayload = {
     userId:string;
 }
@@ -25,4 +27,9 @@ export type GoogleStrategyType = {
     email: string,
     image_profile?: string,
     accessToken?: string
+}
+
+export type ProfileImage = {
+    image_profile:MulterFile[];
+    bg_image:MulterFile[];
 }
