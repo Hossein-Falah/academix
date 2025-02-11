@@ -7,6 +7,10 @@ export enum PublicMessage {
     DeletedAccount="اکانت کاربر با موفقعیت حذف شد"
 }
 
+export enum CategoryMessage {
+    Created="دسته بندی جدید با موفقعیت ساخته شد"
+}
+
 export enum AuthMessage {
     UnAuthorizedInValid="روش احراز هویت نامعتبر است",
     ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",
@@ -30,7 +34,8 @@ export enum BadRequestMessage {
 export enum ConflictMessage {
     AlreadyExistAccount="حساب کاربری با این مشخصات قبلا وجود دارد",
     AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
-    AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده"
+    AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده",
+    AlreadyCategory="این دسته بندی قبلا ساخته شده"
 }
 
 export enum ForbiddenMessage {
