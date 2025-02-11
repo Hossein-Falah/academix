@@ -1,10 +1,10 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CategoryDto } from './dto/category.dto';
 import { CategoryEntity } from './entities/category.entity';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { CategoryMessage, ConflictMessage } from 'src/common/enums/message.enum';
+import { CategoryMessage, ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
 
 @Injectable()
 export class CategoryService {
@@ -27,12 +27,16 @@ export class CategoryService {
     }
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    return await this.categoryRepository.find({
+      where: {}
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    const category = await this.categoryRepository.findOneBy({ id });
+    if (!category) throw new NotFoundException(PublicMessage.NotFound);
+    return category;
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {
