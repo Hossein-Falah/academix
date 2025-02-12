@@ -15,7 +15,8 @@ export class CategoryService {
   ) {}
 
   async create(categoryDto: CategoryDto) {
-    let { title, priority, parentId } = categoryDto;
+    let { title, parentId, slug, isActive } = categoryDto;
+    
     title = await this.checkExistByTitle(title);
 
     // if check category parent existing
@@ -27,8 +28,8 @@ export class CategoryService {
     }
 
     const category = this.categoryRepository.create({
-      title, priority,
-      parent: parentCategory
+      title, slug,
+      isActive, parent: parentCategory
     });
 
     await this.categoryRepository.save(category);
@@ -54,6 +55,10 @@ export class CategoryService {
     }
   }
 
+  async findOneBySlug(slug:string) {
+    return await this.categoryRepository.findOneBy({ slug });
+  }
+
   async findOne(id: string) {
     const category = await this.categoryRepository.findOne({
       where: { id },
@@ -65,9 +70,10 @@ export class CategoryService {
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     const category = await this.findOne(id);
-    const { title, priority } = updateCategoryDto;
+    const { title, isActive, slug } = updateCategoryDto;
     if (title) category.title = title;
-    if (priority) category.priority = priority;
+    if (slug) category.slug = slug;
+    if (isActive) category.isActive = isActive;
 
     await this.categoryRepository.save(category);
 

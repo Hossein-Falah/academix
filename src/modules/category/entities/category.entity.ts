@@ -6,8 +6,10 @@ import { BaseEntity } from "src/common/abstracts/base.entity";
 export class CategoryEntity extends BaseEntity {
     @Column()
     title:string;
-    @Column({ nullable: true })
-    priority:number;
+    @Column()
+    slug:string;
+    @Column({ default: true })
+    isActive:boolean
     @ManyToOne(() => CategoryEntity, category => category.children, { nullable: true, onDelete: "CASCADE" })
     parent:CategoryEntity;
     @OneToMany(() => CategoryEntity, category => category.parent)
