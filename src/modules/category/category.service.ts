@@ -15,11 +15,20 @@ export class CategoryService {
   ) {}
 
   async create(categoryDto: CategoryDto) {
-    let { title, priority } = categoryDto;
+    let { title, priority, parentId } = categoryDto;
     title = await this.checkExistByTitle(title);
 
+    // if check category parent existing
+    let parentCategory: CategoryEntity | null = null;
+    
+    if (parentId) {
+      parentCategory = await this.categoryRepository.findOneBy({ id: parentId });  
+      if (!parentCategory) throw new NotFoundException(CategoryMessage.NotFound);
+    }
+
     const category = this.categoryRepository.create({
-      title, priority
+      title, priority,
+      parent: parentCategory
     });
 
     await this.categoryRepository.save(category);

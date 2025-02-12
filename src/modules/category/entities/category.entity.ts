@@ -1,4 +1,4 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { EntityNames } from "src/common/enums/entity.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 
@@ -8,4 +8,8 @@ export class CategoryEntity extends BaseEntity {
     title:string;
     @Column({ nullable: true })
     priority:number;
+    @ManyToOne(() => CategoryEntity, category => category.children, { nullable: true, onDelete: "CASCADE" })
+    parent:CategoryEntity;
+    @OneToMany(() => CategoryEntity, category => category.parent)
+    children: CategoryEntity[];
 }
