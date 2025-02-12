@@ -45,6 +45,6 @@ export class CategoryController {
   @Delete(':id')
   @CanAccess(Roles.Admin)
   remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+    return this.categoryService.remove(id);
   }
 }

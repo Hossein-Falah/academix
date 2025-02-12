@@ -11,7 +11,7 @@ export const Pagination = () => {
         }),
         ApiQuery({
             name: "limit",
-            example: 1,
+            example: 10,
             required: false,
             type: "integer"
         })

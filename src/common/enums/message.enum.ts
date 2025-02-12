@@ -8,7 +8,8 @@ export enum PublicMessage {
 }
 
 export enum CategoryMessage {
-    Created="دسته بندی جدید با موفقعیت ساخته شد"
+    Created="دسته بندی جدید با موفقعیت ساخته شد",
+    Removed="دسته بندی با موفقعیت حذف شد"
 }
 
 export enum AuthMessage {
