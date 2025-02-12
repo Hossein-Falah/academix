@@ -32,7 +32,7 @@ export class TokenService {
         try {
             const token = this.jwtService.sign(payload, {
                 secret: process.env.ACCESS_TOKEN_SECRET,
-                expiresIn:  "1y"
+                expiresIn:  60 * 15
             });
 
             return token;
