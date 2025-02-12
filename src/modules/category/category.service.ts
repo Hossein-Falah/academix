@@ -49,8 +49,17 @@ export class CategoryService {
     return category;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.findOne(id);
+    const { title, priority } = updateCategoryDto;
+    if (title) category.title = title;
+    if (priority) category.priority = priority;
+
+    await this.categoryRepository.save(category);
+
+    return {
+      message: CategoryMessage.Updated
+    }
   }
 
   async remove(id: string) {

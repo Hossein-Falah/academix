@@ -39,7 +39,7 @@ export class CategoryController {
   @Patch(':id')
   @CanAccess(Roles.Admin)
   update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
+    return this.categoryService.update(id, updateCategoryDto);
   }
   
   @Delete(':id')
