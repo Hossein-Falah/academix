@@ -22,5 +22,11 @@ namespace NodeJS {
         GOOGLE_CLIENT_ID:string;
         GOOGLE_CIIENT_SECRET:string;
         GOOGLE_CLLBACK_URL:string;
+
+        //s3 service
+        S3_BUCKET_NAME:string;
+        S3_ACCESS_KEY:string;
+        S3_SECRET_KEY:string;
+        S3_ENDPOINT:string;
     }
 }
