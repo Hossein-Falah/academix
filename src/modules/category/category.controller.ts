@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,8 @@ import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
 import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
+import { Pagination } from 'src/common/decorators/pagination.decorator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('category')
 @ApiTags("Category")
@@ -24,8 +26,9 @@ export class CategoryController {
   
   @Get()
   @SkipAuth()
-  findAll() {
-    return this.categoryService.findAll();
+  @Pagination()
+  findAll(@Query() paginationDto:PaginationDto) {
+    return this.categoryService.findAll(paginationDto);
   }
   
   @Get(':id')
