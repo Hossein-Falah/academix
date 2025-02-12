@@ -36,6 +36,12 @@ export class CategoryController {
     return this.categoryService.findOne(id);
   }
   
+  @Get("/:slug")
+  @SkipAuth()
+  findBySlug(@Param("slug") slug:string) {
+    return this.categoryService.findOneBySlug(slug);
+  }
+
   @Patch(':id')
   @CanAccess(Roles.Admin)
   update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
