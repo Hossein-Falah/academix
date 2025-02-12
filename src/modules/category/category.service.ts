@@ -40,11 +40,13 @@ export class CategoryService {
 
   async findAll(paginationDto:PaginationDto) {
     const { limit, page, skip } = PaginationSolver(paginationDto);
-    const [categories, count] = await this.categoryRepository.findAndCount({
-      where: {},
+    let [categories, count] = await this.categoryRepository.findAndCount({
+      relations: ['children', 'parent'],
       skip,
       take: limit
     });
+
+    categories = categories.filter(category => !category.parent);    
 
     return {
       categories,
@@ -53,7 +55,10 @@ export class CategoryService {
   }
 
   async findOne(id: string) {
-    const category = await this.categoryRepository.findOneBy({ id });
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+      relations: ["children"]
+    });
     if (!category) throw new NotFoundException(PublicMessage.NotFound);
     return category;
   }
