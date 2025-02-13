@@ -74,6 +74,19 @@ export class BlogService {
     return `This action returns a #${id} blog`;
   }
 
+  async myBlog() {
+    const { id } = this.request.user;
+
+    return await this.blogRepository.find({
+      where: {
+        authorId: id
+      },
+      order: {
+        id: "DESC"
+      }
+    })
+  }
+
   update(id: number, updateBlogDto: UpdateBlogDto) {
     return `This action updates a #${id} blog`;
   }
