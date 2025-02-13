@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, UpdateDateColumn } from "typeorm";
 import { EntityNames } from "src/common/enums/entity.enum";
 import { Roles } from "src/common/enums/role.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 import { ProfileEntity } from "./profile.entity";
 import { OtpEntity } from "./otp.entity";
+import { BlogEntity } from "src/modules/blog/entities/blog.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity extends BaseEntity {
@@ -37,6 +38,8 @@ export class UserEntity extends BaseEntity {
     @OneToOne(() => OtpEntity, otp => otp.user, { nullable: true })
     @JoinColumn()
     otp:OtpEntity;
+    @OneToMany(() => BlogEntity, blog => blog.author)
+    blogs:BlogEntity[];
     @CreateDateColumn()
     created_at:Date;
     @UpdateDateColumn()
