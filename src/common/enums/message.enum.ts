@@ -16,6 +16,13 @@ export enum CategoryMessage {
     InValidCategory="لطفا دسته بندی مورد نظر را صحیح وارد کنید"
 }
 
+export enum BlogMessage {
+    Created="بلاگ جدید با موفقعیت ساخته شد",
+    Deleted="بلاگ مورد نظر با موفقعیت حذف شد",
+    NotFound="همچین بلاگی وجود ندارد",
+    AlreadyBlog="این بلاگ قبلا ساخته شده"
+}
+
 export enum AuthMessage {
     UnAuthorizedInValid="روش احراز هویت نامعتبر است",
     ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",
@@ -41,8 +48,7 @@ export enum ConflictMessage {
     AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
     AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده",
     AlreadyCategory="این دسته بندی قبلا ساخته شده",
-    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید",
-    AlreadyBlog="این بلاگ قبلا ساخته شده"
+    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید"
 }
 
 export enum ForbiddenMessage {

@@ -3,11 +3,11 @@ import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { isArray } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, ConflictException, Inject, Injectable, Scope } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { BlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { BlogEntity } from '../entities/blog.entity';
 import { S3Service } from 'src/modules/s3/s3.service';
-import { CategoryMessage, ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { BlogMessage, CategoryMessage, ConflictMessage } from 'src/common/enums/message.enum';
 import { BlogStatus } from 'src/common/enums/status.enum';
 import { CategoryService } from 'src/modules/category/category.service';
 import { BlogCategoryEntity } from '../entities/blog-category.entity';
@@ -62,7 +62,7 @@ export class BlogService {
     }
     
     return {
-      message: PublicMessage.Created
+      message: BlogMessage.Created
     }
   }
 
@@ -91,8 +91,19 @@ export class BlogService {
     return `This action updates a #${id} blog`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} blog`;
+  async remove(id: string) {
+    await this.checkExistBlogById(id);
+    await this.blogRepository.delete({ id });
+
+    return {
+      message: BlogMessage.Deleted
+    }
+  }
+
+  async checkExistBlogById(id:string) {
+    const blog = await this.blogRepository.findOneBy({ id });
+    if (!blog) throw new NotFoundException(BlogMessage.NotFound);
+    return blog;
   }
 
   async checkBlogBySlug(slug:string) {
@@ -102,6 +113,6 @@ export class BlogService {
 
   async checkExistBlogByTitle(title:string) {
     const blog = await this.blogRepository.findOneBy({ title });
-    if (blog) throw new ConflictException(ConflictMessage.AlreadyBlog)
+    if (blog) throw new ConflictException(BlogMessage.AlreadyBlog)
   }
 }
