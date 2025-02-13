@@ -3,6 +3,7 @@ import { EntityNames } from "src/common/enums/entity.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 import { BlogStatus } from "src/common/enums/status.enum";
 import { UserEntity } from "src/modules/user/entities/user.entity";
+import { BlogCategoryEntity } from "./blog-category.entity";
 
 @Entity(EntityNames.Blog)
 export class BlogEntity extends BaseEntity {
@@ -10,10 +11,12 @@ export class BlogEntity extends BaseEntity {
     title:string;
     @Column()
     description:string;
-    @Column()
+    @Column({ type: "longtext" })
     content:string;
-    @Column({ nullable: true })
+    @Column()
     image:string;
+    @Column({ nullable: true })
+    imageKey:string;
     @Column({ unique: true })
     slug:string;
     @Column()
@@ -28,6 +31,8 @@ export class BlogEntity extends BaseEntity {
     authorId:string;
     @ManyToOne(() => UserEntity, user => user.blogs, { onDelete: "CASCADE" })
     author:UserEntity;
+    @OneToMany(() => BlogCategoryEntity, category => category.blog)
+    categories: BlogCategoryEntity[];
     @CreateDateColumn()
     created_at:Date;
     @UpdateDateColumn()

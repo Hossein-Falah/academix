@@ -4,14 +4,16 @@ export enum PublicMessage {
     Updated="اطلاعات با موفقعیت ویرایش شد",
     NotFound="اطلاعات مورد نظر یافت نشد",
     SendOTP="کد تایید با موفقعیت ارسال شد",
-    DeletedAccount="اکانت کاربر با موفقعیت حذف شد"
+    DeletedAccount="اکانت کاربر با موفقعیت حذف شد",
+    Created="اطلاعات با موفقعیت ساخته شد"
 }
 
 export enum CategoryMessage {
     Created="دسته بندی جدید با موفقعیت ساخته شد",
     Removed="دسته بندی با موفقعیت حذف شد",
     Updated="دسته بندی با موفقعیت اپدیت شد",
-    NotFound="دسته بندی مورد نظر پیدا نشد"
+    NotFound="دسته بندی مورد نظر پیدا نشد",
+    InValidCategory="لطفا دسته بندی مورد نظر را صحیح وارد کنید"
 }
 
 export enum AuthMessage {
@@ -38,7 +40,9 @@ export enum ConflictMessage {
     AlreadyExistAccount="حساب کاربری با این مشخصات قبلا وجود دارد",
     AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
     AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده",
-    AlreadyCategory="این دسته بندی قبلا ساخته شده"
+    AlreadyCategory="این دسته بندی قبلا ساخته شده",
+    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید",
+    AlreadyBlog="این بلاگ قبلا ساخته شده"
 }
 
 export enum ForbiddenMessage {
