@@ -1,12 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Query } from '@nestjs/common';
 import { BlogService } from '../services/blog.service';
-import { BlogDto, UpdateBlogDto } from '../dto/blog.dto';
+import { BlogDto, FilterBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
 import { UploadFileS3 } from 'src/common/interceptors/upload.interceptor';
+import { Pagination } from 'src/common/decorators/pagination.decorator';
+import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
+import { FilterBlog } from 'src/common/decorators/filter.decorator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('blog')
 @ApiTags("Blog")
@@ -40,9 +44,12 @@ export class BlogController {
     return this.blogService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.blogService.findOne(+id);
+  @Get('search-filter')
+  @Pagination()
+  @SkipAuth()
+  @FilterBlog()
+  find(@Query() paginationDto:PaginationDto, @Query() filterDto:FilterBlogDto) {
+    return this.blogService.find(paginationDto, filterDto);
   }
 
   @Patch(':id')

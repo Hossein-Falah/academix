@@ -9,7 +9,7 @@ import { BlogCategoryEntity } from "./blog-category.entity";
 export class BlogEntity extends BaseEntity {
     @Column()
     title:string;
-    @Column()
+    @Column({ length: 500 })
     description:string;
     @Column({ type: "longtext" })
     content:string;

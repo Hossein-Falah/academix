@@ -4,13 +4,16 @@ import { REQUEST } from '@nestjs/core';
 import { isArray } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { BlogDto, UpdateBlogDto } from '../dto/blog.dto';
+import { BlogDto, FilterBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { BlogEntity } from '../entities/blog.entity';
 import { S3Service } from 'src/modules/s3/s3.service';
 import { BlogMessage, CategoryMessage, ConflictMessage } from 'src/common/enums/message.enum';
 import { BlogStatus } from 'src/common/enums/status.enum';
 import { CategoryService } from 'src/modules/category/category.service';
 import { BlogCategoryEntity } from '../entities/blog-category.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PaginationGenerator, PaginationSolver } from 'src/common/utils/pagination.util';
+import { EntityNames } from 'src/common/enums/entity.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
@@ -70,8 +73,40 @@ export class BlogService {
     return `This action returns all blog`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} blog`;
+  async find(paginationDto:PaginationDto, filterDto:FilterBlogDto) {
+    const { page, limit, skip } = PaginationSolver(paginationDto);
+    let { category, search } = filterDto;
+
+    let where = "";
+
+    if (category) {
+      category = category.toLowerCase();
+      if (where.length > 0) where += " AND ";
+      where += "category.title = LOWER(:category)";
+    }
+
+    if (search) {
+      if (where.length > 0) where += " AND ";
+      search = `%${search}%`;
+      where += "CONCAT(blog.title, blog.description, blog.content) ILIKE :search"
+    };
+
+    const [blogs, count] = await this.blogRepository.createQueryBuilder(EntityNames.Blog)
+      .leftJoin("blog.categories", "categories")
+      .leftJoin("categories.category", "category")
+      .leftJoin("blog.author", "author")
+      .leftJoin("author.profile", "profile")
+      .addSelect(['categories.id', "category.title", "author.username", "author.id", "profile.nike_name"])
+      .where(where, { category, search })
+      .orderBy("blog.id", "DESC")
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount()
+    
+    return {
+      pagination: PaginationGenerator(count, page, limit),
+      blogs
+    }
   }
 
   async myBlog() {
