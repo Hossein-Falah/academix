@@ -53,6 +53,13 @@ export class BlogController {
     return this.blogService.findOne(id);
   }
 
+  @Get("/search-slug/:slug")
+  @SkipAuth()
+  @Pagination()
+  findOneBySlug(@Param('slug') slug:string) {
+    return this.blogService.findOneBySlug(slug);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
     return this.blogService.update(+id, updateBlogDto);

@@ -154,6 +154,29 @@ export class BlogService {
     })
   }
 
+  async findOneBySlug(slug:string) {    
+    const blog = await this.blogRepository.createQueryBuilder(EntityNames.Blog)
+      .leftJoin("blog.categories", "categories")
+      .leftJoin("categories.category", "category")
+      .leftJoin("blog.author", "author")
+      .leftJoin("author.profile", "profile")
+      .addSelect([
+        'categories.id',
+        'category.title',
+        'author.username',
+        'author.id',
+        'profile.nike_name'
+      ])
+      .where({ slug })
+      .getOne()
+    
+    if (!blog) throw new NotFoundException(BlogMessage.NotFound);
+
+    return {
+      blog
+    }
+  }
+
   update(id: number, updateBlogDto: UpdateBlogDto) {
     return `This action updates a #${id} blog`;
   }
