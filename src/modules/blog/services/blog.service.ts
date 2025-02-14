@@ -69,11 +69,7 @@ export class BlogService {
     }
   }
 
-  findAll() {
-    return `This action returns all blog`;
-  }
-
-  async find(paginationDto:PaginationDto, filterDto:FilterBlogDto) {
+  async findAllWithQuery(paginationDto:PaginationDto, filterDto:FilterBlogDto) {
     const { page, limit, skip } = PaginationSolver(paginationDto);
     let { category, search } = filterDto;
 
@@ -107,6 +103,42 @@ export class BlogService {
       pagination: PaginationGenerator(count, page, limit),
       blogs
     }
+  }
+
+  async findOne(id:string) {
+    const blog = await this.blogRepository.findOne({
+      where: { id },
+      relations: {
+        author: { profile: true }
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        content: true,
+        image: true, 
+        imageKey: true,
+        slug: true,
+        time_for_stady: true,
+        view: true,
+        created_at: true,
+        author: {
+          id: true,
+          username: true,
+          profile: {
+            image_profile: true,
+            nike_name: true
+          }
+        }
+      }
+    })
+
+    if (!blog) throw new NotFoundException(BlogMessage.NotFound);
+
+    // incement count view
+    await this.blogRepository.increment({id}, "view", 1);
+
+    return blog;
   }
 
   async myBlog() {

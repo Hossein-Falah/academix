@@ -1,7 +1,7 @@
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Query } from '@nestjs/common';
 import { BlogService } from '../services/blog.service';
 import { BlogDto, FilterBlogDto, UpdateBlogDto } from '../dto/blog.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
@@ -40,16 +40,17 @@ export class BlogController {
   }
 
   @Get()
-  findAll() {
-    return this.blogService.findAll();
-  }
-
-  @Get('search-filter')
   @Pagination()
   @SkipAuth()
   @FilterBlog()
-  find(@Query() paginationDto:PaginationDto, @Query() filterDto:FilterBlogDto) {
-    return this.blogService.find(paginationDto, filterDto);
+  findAllWithQuery(@Query() paginationDto:PaginationDto, @Query() filterDto:FilterBlogDto) {
+    return this.blogService.findAllWithQuery(paginationDto, filterDto);
+  }
+
+  @Get(":id")
+  @SkipAuth()
+  findOne(@Param('id') id:string) {
+    return this.blogService.findOne(id);
   }
 
   @Patch(':id')
