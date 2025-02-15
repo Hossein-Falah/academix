@@ -21,7 +21,9 @@ export enum BlogMessage {
     Updated="بلاگ مورد نظر با موفقعیت اپدیت شد",
     Deleted="بلاگ مورد نظر با موفقعیت حذف شد",
     NotFound="همچین بلاگی وجود ندارد",
-    AlreadyBlog="این بلاگ قبلا ساخته شده"
+    AlreadyBlog="این بلاگ قبلا ساخته شده",
+    InValidStatus="لطفا وضعیت مقاله را درست وارد کنید",
+    changeStatus="وضعیت بلاگ با موفقعیت تغییر کرد"
 }
 
 export enum AuthMessage {

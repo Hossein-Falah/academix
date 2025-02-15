@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsNumberString, Length } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumberString, Length } from "class-validator";
 import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
+import { BlogStatus } from "src/common/enums/status.enum";
 
 export class BlogDto {
     @ApiProperty()
@@ -26,6 +27,12 @@ export class BlogDto {
 }
 
 export class UpdateBlogDto extends PartialType(BlogDto) {}
+
+export class StatusBlogDto {
+    @ApiProperty({ enum: BlogStatus })
+    @IsEnum(BlogStatus)
+    status:BlogStatus
+}
 
 export class FilterBlogDto {
     category:string;

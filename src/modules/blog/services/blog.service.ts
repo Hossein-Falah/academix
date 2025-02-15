@@ -231,6 +231,20 @@ export class BlogService {
     return { message: BlogMessage.Updated };
   }
 
+  async changeStatus(id:string, status:BlogStatus) {
+    await this.checkExistBlogById(id);
+
+    if (!Object.values(BlogStatus).includes(status)) {
+      throw new BadRequestException(BlogMessage.InValidStatus);
+    }
+
+    await this.blogRepository.update({ id }, { status });
+
+    return {
+      message: BlogMessage.changeStatus
+    }
+  }
+
   async remove(id: string) {
     await this.checkExistBlogById(id);
     await this.blogRepository.delete({ id });

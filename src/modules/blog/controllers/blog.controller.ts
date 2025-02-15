@@ -1,7 +1,7 @@
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Query } from '@nestjs/common';
 import { BlogService } from '../services/blog.service';
-import { BlogDto, FilterBlogDto, UpdateBlogDto } from '../dto/blog.dto';
+import { BlogDto, FilterBlogDto, StatusBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
@@ -61,6 +61,7 @@ export class BlogController {
   }
 
   @Patch(':id')
+  @CanAccess(Roles.Admin, Roles.Teacher)
   @UseInterceptors(UploadFileS3('image'))
   @ApiConsumes(SwaggerConsmes.Multipart)
   update(
@@ -77,6 +78,16 @@ export class BlogController {
     image: Express.Multer.File
   ) {
     return this.blogService.update(id, blogDto, image);
+  }
+
+  @Patch(":id/status")
+  @CanAccess(Roles.Admin, Roles.Teacher)
+  @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
+  async changeStatus(
+    @Param("id") id:string,
+    @Body() statusDto:StatusBlogDto
+  ) {
+    return this.blogService.changeStatus(id, statusDto.status);
   }
 
   @Delete(':id')
