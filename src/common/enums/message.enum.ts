@@ -25,7 +25,9 @@ export enum BlogMessage {
     InValidStatus="لطفا وضعیت مقاله را درست وارد کنید",
     changeStatus="وضعیت بلاگ با موفقعیت تغییر کرد",
     Like="بلاگ با موفقعیت لایک شد",
-    DisLike="لایک بلاگ برداشته شد"
+    DisLike="لایک بلاگ برداشته شد",
+    Bookmark="بلاگ با موفقعیت ذخیره شد",
+    UnBookmark="بلاگ از لیست ذخیره پاک شد"
 }
 
 export enum AuthMessage {

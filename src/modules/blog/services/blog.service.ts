@@ -7,7 +7,7 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import { BlogDto, FilterBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { BlogEntity } from '../entities/blog.entity';
 import { S3Service } from 'src/modules/s3/s3.service';
-import { BlogMessage, CategoryMessage, ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { BlogMessage, CategoryMessage, ConflictMessage } from 'src/common/enums/message.enum';
 import { BlogStatus } from 'src/common/enums/status.enum';
 import { CategoryService } from 'src/modules/category/category.service';
 import { BlogCategoryEntity } from '../entities/blog-category.entity';
@@ -15,6 +15,7 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { PaginationGenerator, PaginationSolver } from 'src/common/utils/pagination.util';
 import { EntityNames } from 'src/common/enums/entity.enum';
 import { BlogLikesEntity } from '../entities/like.entity';
+import { BlogBookmarkEntity } from '../entities/bookmark.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
@@ -22,6 +23,7 @@ export class BlogService {
     @InjectRepository(BlogEntity) private blogRepository: Repository<BlogEntity>,
     @InjectRepository(BlogCategoryEntity) private blogCategoryRepository: Repository<BlogCategoryEntity>,
     @InjectRepository(BlogLikesEntity) private blogLikeRepository: Repository<BlogLikesEntity>,
+    @InjectRepository(BlogBookmarkEntity) private blogBookmarkRepository:Repository<BlogBookmarkEntity>,
     @Inject(REQUEST) private request: Request,
     private s3Service: S3Service,
     private categoryService: CategoryService
@@ -97,6 +99,7 @@ export class BlogService {
       .addSelect(['categories.id', "category.title", "author.username", "author.id", "profile.nike_name"])
       .where(where, { category, search })
       .loadRelationCountAndMap("blog.likes", "blog.likes")
+      .loadRelationCountAndMap("blog.bookmarks", "blog.bookmarks")
       .orderBy("blog.id", "DESC")
       .skip(skip)
       .take(limit)
@@ -174,19 +177,23 @@ export class BlogService {
       ])
       .where({ slug })
       .loadRelationCountAndMap("blog.likes", "blog.likes")
+      .loadRelationCountAndMap("blog.bookmarks", "blog.bookmarks")
       .getOne()
 
     if (!blog) throw new NotFoundException(BlogMessage.NotFound);
 
     let isLiked = false;
+    let isBookmarked = false;
 
     if (userId) {
       isLiked = !!(await this.blogLikeRepository.findOneBy({ userId, blogId: blog.id }))
+      isBookmarked = !!(await this.blogBookmarkRepository.findOneBy({ userId, blogId: blog.id }));
     }
 
     return {
       blog,
-      isLiked
+      isLiked,
+      isBookmarked
     }
   }
 
@@ -280,6 +287,27 @@ export class BlogService {
     } else {
       await this.blogLikeRepository.insert({
         blogId, userId
+      })
+    }
+
+    return {
+      message
+    }
+  }
+
+  async bookmarkToggle(blogId:string) {
+    const { id:userId } = this.request.user;
+    await this.checkExistBlogById(blogId);
+    const isBookmarked = await this.blogBookmarkRepository.findOneBy({ userId, blogId });
+    
+    let message = BlogMessage.Bookmark;
+
+    if (isBookmarked) {
+      await this.blogBookmarkRepository.delete({ id: isBookmarked.id });
+      message = BlogMessage.UnBookmark;
+    } else {
+      await this.blogBookmarkRepository.insert({
+        userId, blogId
       })
     }
 

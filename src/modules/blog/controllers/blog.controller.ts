@@ -99,4 +99,9 @@ export class BlogController {
   likeToggle(@Param('id') id:string) {
     return this.blogService.likeToggle(id);
   }
+
+  @Put('/bookmark/:id')
+  bookmarkToggle(@Param('id') id:string) {
+    return this.blogService.bookmarkToggle(id);
+  }
 }
