@@ -25,8 +25,6 @@ export class BlogEntity extends BaseEntity {
     status:string
     @Column({ default: 0 })
     view:number;
-    @Column({ default: false })
-    isPulished:boolean;
     @Column()
     authorId:string;
     @ManyToOne(() => UserEntity, user => user.blogs, { onDelete: "CASCADE" })
