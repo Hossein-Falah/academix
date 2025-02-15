@@ -1,5 +1,5 @@
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Query, Put } from '@nestjs/common';
 import { BlogService } from '../services/blog.service';
 import { BlogDto, FilterBlogDto, StatusBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
@@ -93,5 +93,10 @@ export class BlogController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.blogService.remove(id);
+  }
+
+  @Put('/like/:id')
+  likeToggle(@Param('id') id:string) {
+    return this.blogService.likeToggle(id);
   }
 }

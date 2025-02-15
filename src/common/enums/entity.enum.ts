@@ -4,5 +4,8 @@ export enum EntityNames {
     Profile="profile",
     Category="category",
     Blog="blog",
-    BlogCategory="blog_category"
+    BlogCategory="blog_category",
+    BlogLikes="blog_likes",
+    BlogBookmarks="blog_bookmarks",
+    BlogComments="blog_comments"
 }

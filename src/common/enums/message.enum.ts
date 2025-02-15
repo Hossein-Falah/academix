@@ -23,7 +23,9 @@ export enum BlogMessage {
     NotFound="همچین بلاگی وجود ندارد",
     AlreadyBlog="این بلاگ قبلا ساخته شده",
     InValidStatus="لطفا وضعیت مقاله را درست وارد کنید",
-    changeStatus="وضعیت بلاگ با موفقعیت تغییر کرد"
+    changeStatus="وضعیت بلاگ با موفقعیت تغییر کرد",
+    Like="بلاگ با موفقعیت لایک شد",
+    DisLike="لایک بلاگ برداشته شد"
 }
 
 export enum AuthMessage {

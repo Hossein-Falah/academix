@@ -7,19 +7,21 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import { BlogDto, FilterBlogDto, UpdateBlogDto } from '../dto/blog.dto';
 import { BlogEntity } from '../entities/blog.entity';
 import { S3Service } from 'src/modules/s3/s3.service';
-import { BlogMessage, CategoryMessage, ConflictMessage } from 'src/common/enums/message.enum';
+import { BlogMessage, CategoryMessage, ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { BlogStatus } from 'src/common/enums/status.enum';
 import { CategoryService } from 'src/modules/category/category.service';
 import { BlogCategoryEntity } from '../entities/blog-category.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { PaginationGenerator, PaginationSolver } from 'src/common/utils/pagination.util';
 import { EntityNames } from 'src/common/enums/entity.enum';
+import { BlogLikesEntity } from '../entities/like.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
   constructor(
     @InjectRepository(BlogEntity) private blogRepository: Repository<BlogEntity>,
     @InjectRepository(BlogCategoryEntity) private blogCategoryRepository: Repository<BlogCategoryEntity>,
+    @InjectRepository(BlogLikesEntity) private blogLikeRepository: Repository<BlogLikesEntity>,
     @Inject(REQUEST) private request: Request,
     private s3Service: S3Service,
     private categoryService: CategoryService
@@ -94,6 +96,7 @@ export class BlogService {
       .leftJoin("author.profile", "profile")
       .addSelect(['categories.id', "category.title", "author.username", "author.id", "profile.nike_name"])
       .where(where, { category, search })
+      .loadRelationCountAndMap("blog.likes", "blog.likes")
       .orderBy("blog.id", "DESC")
       .skip(skip)
       .take(limit)
@@ -121,6 +124,7 @@ export class BlogService {
         slug: true,
         time_for_stady: true,
         view: true,
+        likes: true,
         created_at: true,
         author: {
           id: true,
@@ -155,6 +159,7 @@ export class BlogService {
   }
 
   async findOneBySlug(slug: string) {
+    const userId = this.request?.user?.id;
     const blog = await this.blogRepository.createQueryBuilder(EntityNames.Blog)
       .leftJoin("blog.categories", "categories")
       .leftJoin("categories.category", "category")
@@ -168,12 +173,20 @@ export class BlogService {
         'profile.nike_name'
       ])
       .where({ slug })
+      .loadRelationCountAndMap("blog.likes", "blog.likes")
       .getOne()
 
     if (!blog) throw new NotFoundException(BlogMessage.NotFound);
 
+    let isLiked = false;
+
+    if (userId) {
+      isLiked = !!(await this.blogLikeRepository.findOneBy({ userId, blogId: blog.id }))
+    }
+
     return {
-      blog
+      blog,
+      isLiked
     }
   }
 
@@ -251,6 +264,27 @@ export class BlogService {
 
     return {
       message: BlogMessage.Deleted
+    }
+  }
+
+  async likeToggle(blogId:string) {
+    const { id: userId } = this.request.user;
+    await this.checkExistBlogById(blogId);
+    const isLiked = await this.blogLikeRepository.findOneBy({ userId, blogId });
+
+    let message = BlogMessage.Like;
+
+    if (isLiked) {
+      await this.blogLikeRepository.delete({ id: isLiked.id });
+      message = BlogMessage.DisLike;
+    } else {
+      await this.blogLikeRepository.insert({
+        blogId, userId
+      })
+    }
+
+    return {
+      message
     }
   }
 
