@@ -18,6 +18,7 @@ export enum CategoryMessage {
 
 export enum BlogMessage {
     Created="بلاگ جدید با موفقعیت ساخته شد",
+    Updated="بلاگ مورد نظر با موفقعیت اپدیت شد",
     Deleted="بلاگ مورد نظر با موفقعیت حذف شد",
     NotFound="همچین بلاگی وجود ندارد",
     AlreadyBlog="این بلاگ قبلا ساخته شده"

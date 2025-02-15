@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { isArray } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,16 +18,16 @@ import { EntityNames } from 'src/common/enums/entity.enum';
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
   constructor(
-    @InjectRepository(BlogEntity) private blogRepository:Repository<BlogEntity>,
-    @InjectRepository(BlogCategoryEntity) private blogCategoryRepository:Repository<BlogCategoryEntity>,
-    @Inject(REQUEST) private request:Request,
-    private s3Service:S3Service,
-    private categoryService:CategoryService
-  ) {}
+    @InjectRepository(BlogEntity) private blogRepository: Repository<BlogEntity>,
+    @InjectRepository(BlogCategoryEntity) private blogCategoryRepository: Repository<BlogCategoryEntity>,
+    @Inject(REQUEST) private request: Request,
+    private s3Service: S3Service,
+    private categoryService: CategoryService
+  ) { }
 
   async create(blogDto: BlogDto, image: Express.Multer.File) {
     const user = this.request.user;
-    
+
     let { title, description, content, slug, time_for_stady, categories } = blogDto;
     if (!isArray(categories) && typeof categories === "string") {
       categories = categories.split(",")
@@ -39,8 +39,8 @@ export class BlogService {
 
     const isExistSlug = await this.checkBlogBySlug(slug);
     if (isExistSlug) throw new ConflictException(ConflictMessage.AlreadySlug);
-    
-    const { Key, Location } = await this.s3Service.uploadFile(image, "academix-category");
+
+    const { Key, Location } = await this.s3Service.uploadFile(image, "academix-blog");
 
     let blog = this.blogRepository.create({
       title, description, content,
@@ -63,13 +63,13 @@ export class BlogService {
       })
 
     }
-    
+
     return {
       message: BlogMessage.Created
     }
   }
 
-  async findAllWithQuery(paginationDto:PaginationDto, filterDto:FilterBlogDto) {
+  async findAllWithQuery(paginationDto: PaginationDto, filterDto: FilterBlogDto) {
     const { page, limit, skip } = PaginationSolver(paginationDto);
     let { category, search } = filterDto;
 
@@ -98,14 +98,14 @@ export class BlogService {
       .skip(skip)
       .take(limit)
       .getManyAndCount()
-    
+
     return {
       pagination: PaginationGenerator(count, page, limit),
       blogs
     }
   }
 
-  async findOne(id:string) {
+  async findOne(id: string) {
     const blog = await this.blogRepository.findOne({
       where: { id },
       relations: {
@@ -116,7 +116,7 @@ export class BlogService {
         title: true,
         description: true,
         content: true,
-        image: true, 
+        image: true,
         imageKey: true,
         slug: true,
         time_for_stady: true,
@@ -136,7 +136,7 @@ export class BlogService {
     if (!blog) throw new NotFoundException(BlogMessage.NotFound);
 
     // incement count view
-    await this.blogRepository.increment({id}, "view", 1);
+    await this.blogRepository.increment({ id }, "view", 1);
 
     return blog;
   }
@@ -154,7 +154,7 @@ export class BlogService {
     })
   }
 
-  async findOneBySlug(slug:string) {    
+  async findOneBySlug(slug: string) {
     const blog = await this.blogRepository.createQueryBuilder(EntityNames.Blog)
       .leftJoin("blog.categories", "categories")
       .leftJoin("categories.category", "category")
@@ -169,7 +169,7 @@ export class BlogService {
       ])
       .where({ slug })
       .getOne()
-    
+
     if (!blog) throw new NotFoundException(BlogMessage.NotFound);
 
     return {
@@ -177,8 +177,58 @@ export class BlogService {
     }
   }
 
-  update(id: number, updateBlogDto: UpdateBlogDto) {
-    return `This action updates a #${id} blog`;
+  async update(id: string, blogDto: UpdateBlogDto, image: Express.Multer.File) {
+    const user = this.request.user;
+    let { title, description, content, slug, time_for_stady, categories } = blogDto;
+
+    const blog = await this.checkExistBlogById(id);
+
+    if (typeof categories === "string") {
+      categories = categories.split(',');
+    };
+
+    if (!isArray(categories) || categories.length === 0) {
+      throw new BadRequestException(CategoryMessage.InValidCategory);
+    };
+
+    if (slug && slug !== blog.slug) {
+      const isExistSlug = await this.checkBlogBySlug(slug);
+      if (isExistSlug) throw new ConflictException(ConflictMessage.AlreadySlug);
+    }
+
+    const updateObject: DeepPartial<BlogEntity> = {
+      title: title || blog.title,
+      slug: slug || blog.slug,
+      description: description || blog.description,
+      content: content || blog.content,
+      time_for_stady: time_for_stady || blog.time_for_stady
+    };
+
+    if (image) {
+      const { Location, Key } = await this.s3Service.uploadFile(image, "academix-blog");
+
+      if (Location) {
+        updateObject['image'] = Location;
+        updateObject['imageKey'] = Key;
+        if (blog.imageKey) await this.s3Service.deleteFile(blog.imageKey);
+      }
+    }
+
+    await this.blogRepository.update({ id }, updateObject);
+
+    await this.blogCategoryRepository.delete({ blogId: blog.id });
+
+    const categoryEntities = await Promise.all(
+      categories.map(async title => {
+        let category = await this.categoryService.findOneByTitle(title);
+        if (!category) category = await this.categoryService.insertByTitle(title);
+        return { blogId: blog.id, categoryId: category.id }
+      })
+    )
+
+    await this.blogCategoryRepository.insert(categoryEntities);
+
+    return { message: BlogMessage.Updated };
   }
 
   async remove(id: string) {
@@ -190,18 +240,18 @@ export class BlogService {
     }
   }
 
-  async checkExistBlogById(id:string) {
+  async checkExistBlogById(id: string) {
     const blog = await this.blogRepository.findOneBy({ id });
     if (!blog) throw new NotFoundException(BlogMessage.NotFound);
     return blog;
   }
 
-  async checkBlogBySlug(slug:string) {
+  async checkBlogBySlug(slug: string) {
     const blog = await this.blogRepository.findOneBy({ slug });
     return blog;
   }
 
-  async checkExistBlogByTitle(title:string) {
+  async checkExistBlogByTitle(title: string) {
     const blog = await this.blogRepository.findOneBy({ title });
     if (blog) throw new ConflictException(BlogMessage.AlreadyBlog)
   }

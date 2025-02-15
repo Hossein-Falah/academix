@@ -61,8 +61,22 @@ export class BlogController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
-    return this.blogService.update(+id, updateBlogDto);
+  @UseInterceptors(UploadFileS3('image'))
+  @ApiConsumes(SwaggerConsmes.Multipart)
+  update(
+    @Param('id') id: string, 
+    @Body() blogDto: UpdateBlogDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1 * 1024 * 1024 }),
+          new FileTypeValidator({ fileType: "image/(png|jpg|jpeg|webp)" })
+        ]
+      })
+    )
+    image: Express.Multer.File
+  ) {
+    return this.blogService.update(id, blogDto, image);
   }
 
   @Delete(':id')
