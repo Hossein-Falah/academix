@@ -36,7 +36,8 @@ export enum CommentMessage {
     AlreadyRejecte="کامنت قبلا توسط ادمین رد شده",
     AlreadyAccept="کامنت قبلا توسط ادمین تایید شده",
     Apccepted="نظر شما با موفقعیت تایید شد",
-    Rejected="نظر شما با موفقعیت رد شد"
+    Rejected="نظر شما با موفقعیت رد شد",
+    Remove="نظر شما با موفقعیت حذف شد"
 }
 
 export enum AuthMessage {

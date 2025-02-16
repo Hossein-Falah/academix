@@ -1,5 +1,5 @@
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "src/modules/auth/guard/auth.guard";
 import { BlogCommentService } from "../services/comment.service";
 import { SwaggerConsmes } from "src/common/enums/swagger.consumes.enum";
@@ -38,5 +38,11 @@ export class BlogCommentController {
     @CanAccess(Roles.Admin)
     reject(@Param("id") id:string) {
         return this.commentService.reject(id);
+    }
+
+    @Delete("/delete/:id")
+    @CanAccess(Roles.Admin)
+    delete(@Param("id") id:string) {
+        return this.commentService.delete(id);
     }
 }

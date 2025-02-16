@@ -93,6 +93,16 @@ export class BlogCommentService {
         }
     }
 
+    async delete(id:string) {
+        await this.checkExistById(id);
+
+        await this.blogCommentRepository.delete({ id });
+
+        return {
+            message: CommentMessage.Remove
+        }
+    }
+
     async checkExistById(id:string) {
         const comment = await this.blogCommentRepository.findOneBy({ id });
         if (!comment) throw new NotFoundException(CommentMessage.NotFound);
