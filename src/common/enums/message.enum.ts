@@ -4,14 +4,40 @@ export enum PublicMessage {
     Updated="اطلاعات با موفقعیت ویرایش شد",
     NotFound="اطلاعات مورد نظر یافت نشد",
     SendOTP="کد تایید با موفقعیت ارسال شد",
-    DeletedAccount="اکانت کاربر با موفقعیت حذف شد"
+    DeletedAccount="اکانت کاربر با موفقعیت حذف شد",
+    Created="اطلاعات با موفقعیت ساخته شد"
 }
 
 export enum CategoryMessage {
     Created="دسته بندی جدید با موفقعیت ساخته شد",
     Removed="دسته بندی با موفقعیت حذف شد",
     Updated="دسته بندی با موفقعیت اپدیت شد",
-    NotFound="دسته بندی مورد نظر پیدا نشد"
+    NotFound="دسته بندی مورد نظر پیدا نشد",
+    InValidCategory="لطفا دسته بندی مورد نظر را صحیح وارد کنید"
+}
+
+export enum BlogMessage {
+    Created="بلاگ جدید با موفقعیت ساخته شد",
+    Updated="بلاگ مورد نظر با موفقعیت اپدیت شد",
+    Deleted="بلاگ مورد نظر با موفقعیت حذف شد",
+    NotFound="همچین بلاگی وجود ندارد",
+    AlreadyBlog="این بلاگ قبلا ساخته شده",
+    InValidStatus="لطفا وضعیت مقاله را درست وارد کنید",
+    changeStatus="وضعیت بلاگ با موفقعیت تغییر کرد",
+    Like="بلاگ با موفقعیت لایک شد",
+    DisLike="لایک بلاگ برداشته شد",
+    Bookmark="بلاگ با موفقعیت ذخیره شد",
+    UnBookmark="بلاگ از لیست ذخیره پاک شد"
+}
+
+export enum CommentMessage {
+    Created="کامنت شما با موفقعیت ثبت شد در صورت تایید نمایش داده خواهد شد",
+    NotFound="کامنت مورد نظر پیدا نشد",
+    AlreadyRejecte="کامنت قبلا توسط ادمین رد شده",
+    AlreadyAccept="کامنت قبلا توسط ادمین تایید شده",
+    Apccepted="نظر شما با موفقعیت تایید شد",
+    Rejected="نظر شما با موفقعیت رد شد",
+    Remove="نظر شما با موفقعیت حذف شد"
 }
 
 export enum AuthMessage {
@@ -38,7 +64,8 @@ export enum ConflictMessage {
     AlreadyExistAccount="حساب کاربری با این مشخصات قبلا وجود دارد",
     AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
     AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده",
-    AlreadyCategory="این دسته بندی قبلا ساخته شده"
+    AlreadyCategory="این دسته بندی قبلا ساخته شده",
+    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید"
 }
 
 export enum ForbiddenMessage {

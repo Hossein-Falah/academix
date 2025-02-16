@@ -4,7 +4,6 @@ import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { AuthModule } from '../auth/auth.module';
 import { CategoryEntity } from './entities/category.entity';
-import { S3Service } from '../s3/s3.service';
 
 @Module({
   imports: [
@@ -12,6 +11,6 @@ import { S3Service } from '../s3/s3.service';
     TypeOrmModule.forFeature([CategoryEntity])
   ],
   controllers: [CategoryController],
-  providers: [CategoryService, S3Service],
+  providers: [CategoryService],
 })
 export class CategoryModule {}

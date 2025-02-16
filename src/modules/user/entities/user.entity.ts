@@ -1,9 +1,13 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, UpdateDateColumn } from "typeorm";
 import { EntityNames } from "src/common/enums/entity.enum";
 import { Roles } from "src/common/enums/role.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 import { ProfileEntity } from "./profile.entity";
 import { OtpEntity } from "./otp.entity";
+import { BlogEntity } from "src/modules/blog/entities/blog.entity";
+import { BlogLikesEntity } from "src/modules/blog/entities/like.entity";
+import { BlogBookmarkEntity } from "src/modules/blog/entities/bookmark.entity";
+import { BlogCommentEntity } from "src/modules/blog/entities/comment.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity extends BaseEntity {
@@ -37,6 +41,14 @@ export class UserEntity extends BaseEntity {
     @OneToOne(() => OtpEntity, otp => otp.user, { nullable: true })
     @JoinColumn()
     otp:OtpEntity;
+    @OneToMany(() => BlogEntity, blog => blog.author)
+    blogs:BlogEntity[];
+    @OneToMany(() => BlogLikesEntity, like => like.user)
+    blog_likes:BlogLikesEntity[];
+    @OneToMany(() => BlogBookmarkEntity, bookmarks => bookmarks.user)
+    blog_bookmarks: BlogBookmarkEntity[];
+    @OneToMany(() => BlogCommentEntity, comment => comment.user)
+    blog_comments:BlogCommentEntity[];
     @CreateDateColumn()
     created_at:Date;
     @UpdateDateColumn()

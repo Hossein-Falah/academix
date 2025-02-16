@@ -39,6 +39,16 @@ export class CategoryService {
     }
   }
 
+  async insertByTitle(title:string) {
+    const category = this.categoryRepository.create({
+      title,
+      slug: title,
+      isActive: false
+    })
+
+    return await this.categoryRepository.save(category);
+  }
+
   async findAll(paginationDto:PaginationDto) {
     const { limit, page, skip } = PaginationSolver(paginationDto);
     let [categories, count] = await this.categoryRepository.findAndCount({
@@ -59,6 +69,10 @@ export class CategoryService {
     return await this.categoryRepository.findOneBy({ slug });
   }
 
+  async findOneByTitle(title:string) {
+    return this.categoryRepository.findOneBy({ title });
+  }
+  
   async findOne(id: string) {
     const category = await this.categoryRepository.findOne({
       where: { id },
