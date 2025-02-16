@@ -7,5 +7,8 @@ export enum EntityNames {
     BlogCategory="blog_category",
     BlogLikes="blog_likes",
     BlogBookmarks="blog_bookmarks",
-    BlogComments="blog_comments"
+    BlogComments="blog_comments",
+    Courses="courses",
+    CourseCategory="course_category",
+    CourseStudent="course_student"
 }
