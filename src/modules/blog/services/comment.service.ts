@@ -7,6 +7,8 @@ import { CreateCommentDto } from "../dto/comment.dto";
 import { BlogCommentEntity } from "../entities/comment.entity";
 import { BlogService } from "./blog.service";
 import { CommentMessage } from "src/common/enums/message.enum";
+import { PaginationDto } from "src/common/dto/pagination.dto";
+import { PaginationGenerator, PaginationSolver } from "src/common/utils/pagination.util";
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogCommentService {
@@ -36,6 +38,36 @@ export class BlogCommentService {
 
         return {
             message: CommentMessage.Created
+        }
+    }
+
+    async find(paginationDto:PaginationDto) {
+        const { page, limit, skip } = PaginationSolver(paginationDto);
+        const [comments, count] = await this.blogCommentRepository.findAndCount({
+            where: {},
+            relations: {
+                blog: true,
+                user: { profile: true }
+            },
+            select: {
+                blog: {
+                    title: true
+                },
+                user: {
+                    username: true,
+                    profile: {
+                        nike_name: true
+                    }
+                }
+            },
+            skip,
+            take: limit,
+            order: { id: 'DESC' }
+        })
+
+        return {
+            pagination: PaginationGenerator(count, page, limit),
+            comments
         }
     }
 }
