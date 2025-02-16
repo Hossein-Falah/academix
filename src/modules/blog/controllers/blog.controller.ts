@@ -56,8 +56,9 @@ export class BlogController {
   @Get("/search-slug/:slug")
   @SkipAuth()
   @Pagination()
-  findOneBySlug(@Param('slug') slug:string) {
-    return this.blogService.findOneBySlug(slug);
+  @FilterBlog()
+  findOneBySlug(@Param('slug') slug:string, @Query() paginationDto:PaginationDto) {
+    return this.blogService.findOneBySlug(slug, paginationDto);
   }
 
   @Patch(':id')

@@ -167,7 +167,7 @@ export class BlogService {
     })
   }
 
-  async findOneBySlug(slug: string) {
+  async findOneBySlug(slug: string, paginationDto:PaginationDto) {
     const userId = this.request?.user?.id;
     const blog = await this.blogRepository.createQueryBuilder(EntityNames.Blog)
       .leftJoin("blog.categories", "categories")
@@ -188,6 +188,8 @@ export class BlogService {
 
     if (!blog) throw new NotFoundException(BlogMessage.NotFound);
 
+    const commentData = await this.blogCommentService.findCommentOfBlog(blog.id, paginationDto);
+
     let isLiked = false;
     let isBookmarked = false;
 
@@ -199,7 +201,8 @@ export class BlogService {
     return {
       blog,
       isLiked,
-      isBookmarked
+      isBookmarked,
+      comments: commentData
     }
   }
 

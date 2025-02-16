@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { REQUEST } from "@nestjs/core";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
@@ -64,6 +64,63 @@ export class BlogCommentService {
             take: limit,
             order: { id: 'DESC' }
         })
+
+        return {
+            pagination: PaginationGenerator(count, page, limit),
+            comments
+        }
+    }
+
+    async findCommentOfBlog(blogId:string, paginationDto:PaginationDto) {
+        const { page, limit, skip } = PaginationSolver(paginationDto);
+        const [comments, count] = await this.blogCommentRepository.findAndCount({
+            where: {
+                blogId,
+                parentId: IsNull()
+            },
+            relations: {
+                user: { profile: true },
+                children: {
+                    user: { profile: true },
+                    children: { 
+                        user: { profile: true }
+                    }
+                }
+            },
+            select: {
+                user: {
+                    username: true,
+                    profile: {
+                        nike_name: true
+                    }
+                },
+                children: {
+                    text: true,
+                    created_at: true,
+                    parentId: true,
+                    user: {
+                        username: true,
+                        profile: {
+                            nike_name:true
+                        }
+                    },
+                    children: {
+                        text: true,
+                        created_at: true,
+                        parentId: true,
+                        user: {
+                            username: true,
+                            profile: {
+                                nike_name: true
+                            }
+                        }
+                    }
+                }
+            },
+            skip,
+            take: limit,
+            order: { id: "DESC" }
+        });
 
         return {
             pagination: PaginationGenerator(count, page, limit),
