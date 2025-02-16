@@ -2,7 +2,7 @@ import { Request } from "express";
 import { Repository } from "typeorm";
 import { REQUEST } from "@nestjs/core";
 import { InjectRepository } from "@nestjs/typeorm";
-import { forwardRef, Inject, Injectable, Scope } from "@nestjs/common";
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { CreateCommentDto } from "../dto/comment.dto";
 import { BlogCommentEntity } from "../entities/comment.entity";
 import { BlogService } from "./blog.service";
@@ -69,5 +69,22 @@ export class BlogCommentService {
             pagination: PaginationGenerator(count, page, limit),
             comments
         }
+    }
+
+    async accept(id:string) {
+        const comment = await this.checkExistById(id);
+        if (comment.accepted) throw new BadRequestException(CommentMessage.AlreadyAccept);
+        comment.accepted = true;
+        await this.blogCommentRepository.save(comment);
+
+        return {
+            message: CommentMessage.Apccepted
+        }
+    }
+
+    async checkExistById(id:string) {
+        const comment = await this.blogCommentRepository.findOneBy({ id });
+        if (!comment) throw new NotFoundException(CommentMessage.NotFound);
+        return comment;
     }
 }

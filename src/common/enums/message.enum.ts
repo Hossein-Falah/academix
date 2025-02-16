@@ -31,7 +31,12 @@ export enum BlogMessage {
 }
 
 export enum CommentMessage {
-    Created="کامنت شما با موفقعیت ثبت شد در صورت تایید نمایش داده خواهد شد"
+    Created="کامنت شما با موفقعیت ثبت شد در صورت تایید نمایش داده خواهد شد",
+    NotFound="کامنت مورد نظر پیدا نشد",
+    AlreadyRejecte="کامنت قبلا توسط ادمین رد شده",
+    AlreadyAccept="کامنت قبلا توسط ادمین تایید شده",
+    Apccepted="نظر شما با موفقعیت تایید شد",
+    Rejected="نظر شما با موفقعیت رد شد"
 }
 
 export enum AuthMessage {
