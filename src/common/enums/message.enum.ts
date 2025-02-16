@@ -30,6 +30,10 @@ export enum BlogMessage {
     UnBookmark="بلاگ از لیست ذخیره پاک شد"
 }
 
+export enum CommentMessage {
+    Created="کامنت شما با موفقعیت ثبت شد در صورت تایید نمایش داده خواهد شد"
+}
+
 export enum AuthMessage {
     UnAuthorizedInValid="روش احراز هویت نامعتبر است",
     ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",

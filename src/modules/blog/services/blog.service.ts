@@ -16,6 +16,7 @@ import { PaginationGenerator, PaginationSolver } from 'src/common/utils/paginati
 import { EntityNames } from 'src/common/enums/entity.enum';
 import { BlogLikesEntity } from '../entities/like.entity';
 import { BlogBookmarkEntity } from '../entities/bookmark.entity';
+import { BlogCommentService } from './comment.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
@@ -26,7 +27,8 @@ export class BlogService {
     @InjectRepository(BlogBookmarkEntity) private blogBookmarkRepository:Repository<BlogBookmarkEntity>,
     @Inject(REQUEST) private request: Request,
     private s3Service: S3Service,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private blogCommentService:BlogCommentService
   ) { }
 
   async create(blogDto: BlogDto, image: Express.Multer.File) {
@@ -100,6 +102,9 @@ export class BlogService {
       .where(where, { category, search })
       .loadRelationCountAndMap("blog.likes", "blog.likes")
       .loadRelationCountAndMap("blog.bookmarks", "blog.bookmarks")
+      .loadRelationCountAndMap("blog.comments", "blog.comments", "comments", (qb) =>
+        qb.where("comments.accepted = :accepted", { accepted: true })
+      )
       .orderBy("blog.id", "DESC")
       .skip(skip)
       .take(limit)
@@ -129,6 +134,7 @@ export class BlogService {
         view: true,
         likes: true,
         created_at: true,
+        comments: true,
         author: {
           id: true,
           username: true,
