@@ -33,4 +33,10 @@ export class BlogCommentController {
     accept(@Param('id') id:string) {
         return this.commentService.accept(id);
     }
+
+    @Put("/reject/:id")
+    @CanAccess(Roles.Admin)
+    reject(@Param("id") id:string) {
+        return this.commentService.reject(id);
+    }
 }

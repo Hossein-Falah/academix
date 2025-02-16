@@ -82,6 +82,17 @@ export class BlogCommentService {
         }
     }
 
+    async reject(id:string) {
+        const comment = await this.checkExistById(id);
+        if (!comment.accepted) throw new BadRequestException(CommentMessage.AlreadyRejecte);
+        comment.accepted = false;
+        await this.blogCommentRepository.save(comment);
+
+        return {
+            message: CommentMessage.Rejected
+        }
+    }
+
     async checkExistById(id:string) {
         const comment = await this.blogCommentRepository.findOneBy({ id });
         if (!comment) throw new NotFoundException(CommentMessage.NotFound);
