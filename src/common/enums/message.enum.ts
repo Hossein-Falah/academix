@@ -42,7 +42,9 @@ export enum CommentMessage {
 
 export enum CourseMessage {
     Created="دوره جدید با موفقعیت ساخته شد",
-    AlreadyCourse="همچین دوره ای قبل ثبت شده"
+    AlreadyCourse="همچین دوره ای قبل ثبت شده",
+    NotFound="دوره مورد نظر پیدا نشد",
+    Removed="دوره با موفقعیت حذف شد"
 }
 
 export enum AuthMessage {

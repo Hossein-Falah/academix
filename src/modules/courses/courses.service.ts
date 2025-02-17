@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { isArray } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, ConflictException, Inject, Injectable, Scope } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { CourseDto } from './dto/course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { CourseEntity } from './entities/course.entity';
@@ -12,12 +12,14 @@ import { CategoryMessage, CourseMessage } from 'src/common/enums/message.enum';
 import { S3Service } from '../s3/s3.service';
 import { CategoryService } from '../category/category.service';
 import { CourseCategoryEntity } from './entities/course-category.entity';
+import { CourseStudentEntity } from './entities/course-student.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CoursesService {
   constructor(
     @InjectRepository(CourseEntity) private courseRepository:Repository<CourseEntity>,
     @InjectRepository(CourseCategoryEntity) private courseCategoryRepository:Repository<CourseCategoryEntity>,
+    @InjectRepository(CourseStudentEntity) private courseStudentRepository:Repository<CourseStudentEntity>,
     @Inject(REQUEST) private request:Request,
     private s3Service:S3Service,
     private categoryService:CategoryService
@@ -78,8 +80,23 @@ export class CoursesService {
     return `This action updates a #${id} course`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} course`;
+  async remove(id: string) {
+    await this.checkExistCourseById(id);
+
+    await this.courseCategoryRepository.delete({ courseId: id });
+    await this.courseCategoryRepository.delete({ courseId: id });
+
+    await this.courseRepository.delete({ id });
+
+    return {
+      message: CourseMessage.Removed
+    }
+  }
+
+  async checkExistCourseById(id:string) {
+    const course = await this.courseRepository.findOneBy({ id });
+    if (!course) throw new NotFoundException(CourseMessage.NotFound);
+    return course;
   }
 
   async checkExistCourseByTitle(title:string) {
