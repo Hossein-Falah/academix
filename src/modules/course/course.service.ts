@@ -1,25 +1,28 @@
-import { randomBytes, randomInt } from 'crypto';
+import { randomBytes } from 'crypto';
 import { Request } from 'express';
 import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { isArray } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { CourseDto } from './dto/course.dto';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
+import { CourseDto, FilterCourseDto } from './dto/course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { CourseEntity } from './entities/course.entity';
 import { CategoryMessage, CourseMessage } from 'src/common/enums/message.enum';
 import { S3Service } from '../s3/s3.service';
 import { CategoryService } from '../category/category.service';
 import { CourseCategoryEntity } from './entities/course-category.entity';
-import { CourseStudentEntity } from './entities/course-student.entity';
+// import { CourseStudentEntity } from './entities/course-student.entity';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PaginationGenerator, PaginationSolver } from 'src/common/utils/pagination.util';
+import { EntityNames } from 'src/common/enums/entity.enum';
 
 @Injectable({ scope: Scope.REQUEST })
-export class CoursesService {
+export class CourseService {
   constructor(
     @InjectRepository(CourseEntity) private courseRepository:Repository<CourseEntity>,
     @InjectRepository(CourseCategoryEntity) private courseCategoryRepository:Repository<CourseCategoryEntity>,
-    @InjectRepository(CourseStudentEntity) private courseStudentRepository:Repository<CourseStudentEntity>,
+    // @InjectRepository(CourseStudentEntity) private courseStudentRepository:Repository<CourseStudentEntity>,
     @Inject(REQUEST) private request:Request,
     private s3Service:S3Service,
     private categoryService:CategoryService
@@ -68,8 +71,51 @@ export class CoursesService {
     }
   }
 
-  findAll() {
-    return `This action returns all courses`;
+  async findAll(paginationDto:PaginationDto, filterDto:FilterCourseDto) {
+    const { page, limit, skip } = PaginationSolver(paginationDto);
+
+    let { category, search, isFree, isPublished } = filterDto;
+
+    let where = "";
+
+    if (category) {
+      category = category.toLowerCase();
+      if (where.length > 0) where += " AND ";
+      where += "category.title = LOWER(:category)";
+    }
+
+    if (search) {
+      if (where.length > 0) where += " AND ";
+      search = `%${search}%`;
+      where += "CONCAT(course.title, course.description, course.content) LIKE :search"
+    };
+
+    if (isFree !== undefined) {
+      if (where.length > 0) where += " AND ";
+      where += "course.isFree = :isFree";
+    }
+    
+    if (isPublished !== undefined) {
+      if (where.length > 0) where += " AND ";
+      where += "course.isPublished = :isPublished";
+    }
+
+    const [courses, count] = await this.courseRepository.createQueryBuilder(EntityNames.Course)
+      .leftJoin("course.categories", "categories")
+      .leftJoin("categories.category", "category")
+      .leftJoin("course.teacher", "teacher")
+      .leftJoin("teacher.profile", "profile")
+      .addSelect(['categories.id', "category.title", "teacher.username", "teacher.id", "profile.nike_name"])
+      .where(where, { category, search, isFree, isPublished })
+      .orderBy("course.createdAt", "DESC")
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount()
+
+    return {
+      pagination: PaginationGenerator(count, page, limit),
+      courses
+    }
   }
 
   findOne(id: number) {

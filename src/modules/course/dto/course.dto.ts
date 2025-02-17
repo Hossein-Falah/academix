@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, Length } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, Length } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CourseDto {
@@ -16,7 +16,6 @@ export class CourseDto {
     content:string
     @ApiPropertyOptional({ type: "integer" })
     @IsOptional()
-    @IsNumber({}, { message: "Price must be a valid number" })
     price:number;
     @ApiProperty({ type: "string", format: "binary" })
     cover:string
@@ -34,4 +33,11 @@ export class CourseDto {
     hasCertificate:boolean;
     @ApiProperty({ type: "string", isArray: true })
     categories:string[] | string;
+}
+
+export class FilterCourseDto {
+    category:string;
+    search:string;
+    isFree:boolean;
+    isPublished:boolean;
 }

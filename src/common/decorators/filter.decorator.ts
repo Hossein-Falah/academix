@@ -7,3 +7,12 @@ export const FilterBlog = () => {
         ApiQuery({ name: "search", required: false })
     )
 }
+
+export const FilterCourse = () => {
+    return applyDecorators(
+        ApiQuery({ name: "search", required: false }),
+        ApiQuery({ name: "category", required: false }),
+        ApiQuery({ name: "isFree", required: false, type: Boolean }),
+        ApiQuery({ name: "isPublished", required: false, type: Boolean })
+    )
+}

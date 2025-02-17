@@ -3,9 +3,9 @@ import { EntityNames } from "src/common/enums/entity.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 import { CourseCategoryEntity } from "./course-category.entity";
 import { UserEntity } from "src/modules/user/entities/user.entity";
-import { CourseStudentEntity } from "./course-student.entity";
+// import { CourseStudentEntity } from "./course-student.entity";
 
-@Entity(EntityNames.Courses)
+@Entity(EntityNames.Course)
 export class CourseEntity extends BaseEntity {
     @Column()
     title:string;
@@ -33,8 +33,8 @@ export class CourseEntity extends BaseEntity {
     views:number;
     @OneToMany(() => CourseCategoryEntity, category => category.course)
     categories:CourseCategoryEntity[];
-    @OneToMany(() => CourseStudentEntity, courseStudent => courseStudent.course)
-    students: CourseStudentEntity[];
+    // @OneToMany(() => CourseStudentEntity, courseStudent => courseStudent.course)
+    // students: CourseStudentEntity[];
     @ManyToOne(() => UserEntity, user => user.taughtCourses, { onDelete: "SET NULL" })
     teacher:UserEntity;
     @CreateDateColumn()

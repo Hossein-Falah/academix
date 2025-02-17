@@ -1,20 +1,24 @@
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
-import { CoursesService } from './courses.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Query } from '@nestjs/common';
+import { CourseService } from './course.service';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { CourseDto } from './dto/course.dto';
+import { CourseDto, FilterCourseDto } from './dto/course.dto';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
 import { UploadFileS3 } from 'src/common/interceptors/upload.interceptor';
+import { Pagination } from 'src/common/decorators/pagination.decorator';
+import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { FilterCourse } from 'src/common/decorators/filter.decorator';
 
-@Controller('courses')
-@ApiTags('Courses')
+@Controller('course')
+@ApiTags('Course')
 @ApiBearerAuth('Authorization')
 @UseGuards(AuthGuard)
-export class CoursesController {
-  constructor(private readonly coursesService: CoursesService) {}
+export class CourseController {
+  constructor(private readonly courseService: CourseService) {}
 
   @Post()
   @CanAccess(Roles.Admin, Roles.Teacher)
@@ -29,28 +33,32 @@ export class CoursesController {
     })) image: Express.Multer.File,
     @Body() courseDto: CourseDto
   ) {
-    return this.coursesService.create(courseDto, image);
+    return this.courseService.create(courseDto, image);
   }
 
   @Get()
-  findAll() {
-    return this.coursesService.findAll();
+  @Pagination()
+  @SkipAuth()
+  @FilterCourse()
+  findAll(@Query() paginationDto:PaginationDto, @Query() filterDto:FilterCourseDto) {
+    return this.courseService.findAll(paginationDto, filterDto);
   }
-
+  
   @Get(':id')
+  @SkipAuth()
   findOne(@Param('id') id: string) {
-    return this.coursesService.findOne(+id);
+    return this.courseService.findOne(+id);
   }
   
   @Patch(':id')
   @CanAccess(Roles.Admin, Roles.Teacher)
   update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.coursesService.update(+id, updateCourseDto);
+    return this.courseService.update(+id, updateCourseDto);
   }
   
   @Delete(':id')
   @CanAccess(Roles.Admin, Roles.Teacher)
   remove(@Param('id') id: string) {
-    return this.coursesService.remove(id);
+    return this.courseService.remove(id);
   }
 }

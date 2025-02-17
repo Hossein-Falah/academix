@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 import { EntityNames } from "src/common/enums/entity.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 import { CourseEntity } from "./course.entity";
@@ -10,7 +10,7 @@ export class CourseCategoryEntity extends BaseEntity {
     courseId:string;
     @Column()
     categoryId:string;
-    @ManyToMany(() => CourseEntity, course => course.categories, { onDelete: "CASCADE" })
+    @ManyToOne(() => CourseEntity, course => course.categories, { onDelete: "CASCADE" })
     course:CourseEntity;
     @ManyToOne(() => CategoryEntity, category => category.course_categories, { onDelete: "CASCADE" })
     category:CategoryEntity;
