@@ -9,7 +9,7 @@ import { CourseStudentEntity } from "./course-student.entity";
 export class CourseEntity extends BaseEntity {
     @Column()
     title:string;
-    @Column()
+    @Column({ type: "varchar", length: 450 })
     description:string;
     @Column({ type: 'longtext', nullable: true })
     content:string;
@@ -35,7 +35,7 @@ export class CourseEntity extends BaseEntity {
     categories:CourseCategoryEntity[];
     @OneToMany(() => CourseStudentEntity, courseStudent => courseStudent.course)
     students: CourseStudentEntity[];
-    @ManyToOne(() => UserEntity, user => user.taughtCourses, { onDelete: "SET NULL", nullable: true })
+    @ManyToOne(() => UserEntity, user => user.taughtCourses, { onDelete: "SET NULL" })
     teacher:UserEntity;
     @CreateDateColumn()
     createdAt:Date;

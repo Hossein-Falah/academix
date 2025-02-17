@@ -40,6 +40,11 @@ export enum CommentMessage {
     Remove="نظر شما با موفقعیت حذف شد"
 }
 
+export enum CourseMessage {
+    Created="دوره جدید با موفقعیت ساخته شد",
+    AlreadyCourse="همچین دوره ای قبل ثبت شده"
+}
+
 export enum AuthMessage {
     UnAuthorizedInValid="روش احراز هویت نامعتبر است",
     ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",
