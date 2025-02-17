@@ -118,8 +118,43 @@ export class CourseService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} course`;
+  async findOne(id: string) {
+    const course = await this.courseRepository.findOne({
+      where: { id },
+      relations: {
+        teacher: { profile: true }
+      },
+      select: {
+        id:true,
+        title:true,
+        description:true,
+        content:true,
+        price:true,
+        isFree:true,
+        shortLink:true,
+        isCompleted:true,
+        isPublished:true,
+        rating:true,
+        hasCertificate:true,
+        views:true,
+        teacher: {
+          id:true,
+          username:true,
+          profile: {
+            nike_name:true,
+            image_profile:true
+          }
+        },
+        createdAt:true,
+        updatedAt:true
+      }
+    })
+
+    if (!course) throw new NotFoundException(CourseMessage.NotFound);
+
+    await this.courseRepository.increment({ id }, "views", 1);
+
+    return course;
   }
 
   update(id: number, updateCourseDto: UpdateCourseDto) {

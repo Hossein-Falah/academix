@@ -47,7 +47,7 @@ export class CourseController {
   @Get(':id')
   @SkipAuth()
   findOne(@Param('id') id: string) {
-    return this.courseService.findOne(+id);
+    return this.courseService.findOne(id);
   }
   
   @Patch(':id')
