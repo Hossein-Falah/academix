@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { isArray } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -136,6 +136,7 @@ export class CourseService {
         isPublished:true,
         rating:true,
         hasCertificate:true,
+        cover: true,
         views:true,
         teacher: {
           id:true,
@@ -157,8 +158,58 @@ export class CourseService {
     return course;
   }
 
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
+  async update(id: string, courseDto: UpdateCourseDto, image:Express.Multer.File) {
+    let { 
+      title, description, content,
+      categories, hasCertificate,
+      isCompleted, isPublished, price 
+    } = courseDto;
+
+    const course = await this.checkExistCourseById(id);
+        
+    if (typeof categories === "string") {
+      categories = categories.split(",")
+    } 
+    
+    if (!isArray(categories)) {
+      throw new BadRequestException(CategoryMessage.InValidCategory);
+    }
+
+    const updateObject: DeepPartial<CourseEntity> = {
+      title: title || course.title,
+      description: description || course.description,
+      content: content || course.content,
+      price: price || course.price,
+      isCompleted: isCompleted || course.isCompleted,
+      isPublished: isPublished || course.isPublished,
+      hasCertificate: hasCertificate || course.hasCertificate
+    }
+    
+    if (image) {
+      const { Location } = await this.s3Service.uploadFile(image, `academix-course`);
+      
+      if (Location) {
+        updateObject['cover'] = Location;
+      }
+    };
+
+    await this.courseRepository.update({ id }, updateObject);
+
+    await this.courseCategoryRepository.delete({ courseId: course.id });
+
+    const categoryEntities = await Promise.all(
+      categories.map(async title => {
+        let category = await this.categoryService.findOneByTitle(title);
+        if (!category) category = await this.categoryService.insertByTitle(title);
+        return { courseId: course.id, categoryId: category.id }
+      })
+    )
+
+    await this.courseCategoryRepository.insert(categoryEntities);
+
+    return {
+      message: CourseMessage.Updated
+    }
   }
 
   async remove(id: string) {

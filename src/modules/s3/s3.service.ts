@@ -30,7 +30,7 @@ export class S3Service {
   async deleteFile(Key:string) {
     return await this.s3.deleteObject({
       Bucket: process.env.S3_BUCKET_NAME,
-      Key: decodeURI(Key)
+      Key: Key
     }).promise();
   }
 }

@@ -45,6 +45,7 @@ export enum CourseMessage {
     AlreadyCourse="همچین دوره ای قبل ثبت شده",
     NotFound="دوره مورد نظر پیدا نشد",
     Removed="دوره با موفقعیت حذف شد",
+    Updated="دوره با موفقعیت ویرایش شد"
 }
 
 export enum AuthMessage {

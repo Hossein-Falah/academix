@@ -52,8 +52,19 @@ export class CourseController {
   
   @Patch(':id')
   @CanAccess(Roles.Admin, Roles.Teacher)
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.courseService.update(+id, updateCourseDto);
+  @UseInterceptors(UploadFileS3("cover"))
+  @ApiConsumes(SwaggerConsmes.Multipart)
+  update(
+    @Param('id') id: string,
+    @Body() courseDto: UpdateCourseDto,
+    @UploadedFile(new ParseFilePipe({
+      validators: [
+        new MaxFileSizeValidator({ maxSize: 1 * 1024 * 1024 }),
+        new FileTypeValidator({ fileType: "image/(png|jpg|jpeg|webp)" })
+      ]
+    })) image: Express.Multer.File
+  ) {
+    return this.courseService.update(id, courseDto, image);
   }
   
   @Delete(':id')
