@@ -6,6 +6,7 @@ import { AuthGuard } from '../auth/guard/auth.guard';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
+import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
 
 @Controller('chapter')
 @ApiTags("chapter")
@@ -22,8 +23,9 @@ export class ChapterController {
   }
 
   @Get()
-  findAll() {
-    return this.chapterService.findAll();
+  @SkipAuth()
+  findAll(@Param('courseId') courseId:string) {
+    return this.chapterService.findAll(courseId);
   }
 
   @Get(':id')

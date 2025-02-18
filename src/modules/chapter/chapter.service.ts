@@ -35,8 +35,17 @@ export class ChapterService {
     }
   }
 
-  findAll() {
-    return `This action returns all chapter`;
+  async findAll(courseId:string) {
+    return await this.chapterRepository.find({
+      where: {
+        course: {
+          id: courseId
+        }
+      },
+      order: {
+        order: "ASC"
+      }
+    })
   }
 
   async findOne(id: string) {
