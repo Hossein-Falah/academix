@@ -10,5 +10,6 @@ export enum EntityNames {
     BlogComments="blog_comments",
     Course="course",
     CourseCategory="course_category",
-    CourseStudent="course_student"
+    CourseStudent="course_student",
+    Chapter="chapter"
 }
