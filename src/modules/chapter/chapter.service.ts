@@ -39,16 +39,26 @@ export class ChapterService {
     return `This action returns all chapter`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chapter`;
+  async findOne(id: string) {
+    const chapter = await this.chapterRepository.findOne({
+      where: { id }
+    })
+    if (!chapter) throw new NotFoundException(ChapterMessage.NotFound);
+
+    return chapter;
   }
 
   update(id: number, chapterDto: UpdateChapterDto) {
     return `This action updates a #${id} chapter`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} chapter`;
+  async remove(id: string) {
+    const chapter = await this.findOne(id);
+    await this.chapterRepository.remove(chapter);
+
+    return {
+      message: ChapterMessage.Removed
+    }
   }
 
   async checkExistWithTitle(title:string) {
