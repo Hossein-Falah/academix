@@ -48,6 +48,12 @@ export enum CourseMessage {
     Updated="دوره با موفقعیت ویرایش شد"
 }
 
+export enum ChapterMessage {
+    Created="سر فصل جدید با موفقعیت ساخته شد",
+    NotFound="سر فصل مورد نظر پیدا نشد",
+    AleradyChapter="سر فصل مورد نظر از قبل ساخته شده"
+}
+
 export enum AuthMessage {
     UnAuthorizedInValid="روش احراز هویت نامعتبر است",
     ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",
