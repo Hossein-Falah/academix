@@ -34,8 +34,9 @@ export class ChapterController {
   }
 
   @Patch(':id')
+  @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
   update(@Param('id') id: string, @Body() updateChapterDto: UpdateChapterDto) {
-    return this.chapterService.update(+id, updateChapterDto);
+    return this.chapterService.update(id, updateChapterDto);
   }
 
   @Delete(':id')

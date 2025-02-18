@@ -52,7 +52,8 @@ export enum ChapterMessage {
     Created="سر فصل جدید با موفقعیت ساخته شد",
     NotFound="سر فصل مورد نظر پیدا نشد",
     AleradyChapter="سر فصل مورد نظر از قبل ساخته شده",
-    Removed="سر فصل مورد نظر با موفقعیت حذف شد"
+    Removed="سر فصل مورد نظر با موفقعیت حذف شد",
+    Updated="سر فصل مورد نظر با موفقعیت آپدیت شد"
 }
 
 export enum AuthMessage {

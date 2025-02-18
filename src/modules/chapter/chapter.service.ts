@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChapterDto, UpdateChapterDto } from './dto/chapter.dto';
@@ -57,8 +57,22 @@ export class ChapterService {
     return chapter;
   }
 
-  update(id: number, chapterDto: UpdateChapterDto) {
-    return `This action updates a #${id} chapter`;
+  async update(id: string, chapterDto: UpdateChapterDto) {
+    const { title, description, order } = chapterDto;
+
+    const chapter = await this.findOne(id);
+
+    const updateObject: DeepPartial<ChapterEntity> = {
+      title: title || chapter.title,
+      description: description || chapter.description,
+      order: order || chapter.order
+    }
+
+    await this.chapterRepository.update({ id }, updateObject);
+
+    return {
+      message: ChapterMessage.Updated
+    }
   }
 
   async remove(id: string) {
