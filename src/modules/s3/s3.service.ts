@@ -1,6 +1,7 @@
 import { S3 } from "aws-sdk";
 import { extname } from "path";
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestMessage } from "src/common/enums/message.enum";
 
 @Injectable()
 export class S3Service {
@@ -15,6 +16,22 @@ export class S3Service {
       endpoint: process.env.S3_ENDPOINT,
       region: "default"
     })
+  }
+
+  async uploadVideo(file:Express.Multer.File, folderName:string) {
+    const ext = extname(file.originalname);
+    
+    if (!['.mp4', '.mov', '.avi', '.mkv'].includes(ext)) {
+      throw new BadRequestException(BadRequestMessage.InValidVideoFormat);
+    }
+
+    return await this.s3.upload({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: `${folderName}/${Date.now()}/${ext}}`,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+      ACL: "public-read"
+    }).promise();
   }
 
   async uploadFile(file:Express.Multer.File, folderName:string) {

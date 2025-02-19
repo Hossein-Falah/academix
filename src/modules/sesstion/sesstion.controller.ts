@@ -1,15 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { SesstionService } from './sesstion.service';
-import { CreateSesstionDto } from './dto/create-sesstion.dto';
-import { UpdateSesstionDto } from './dto/update-sesstion.dto';
+import { SesstionDto } from './dto/sesstion.dto';
+import { UpdateSesstionDto } from './entities/sesstion.entity';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { UploadVideoS3 } from 'src/common/interceptors/upload.interceptor';
+import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
 
 @Controller('sesstion')
+@ApiTags('sesstion')
+@ApiBearerAuth("Authorization")
+@UseGuards(AuthGuard)
 export class SesstionController {
   constructor(private readonly sesstionService: SesstionService) {}
 
   @Post()
-  create(@Body() createSesstionDto: CreateSesstionDto) {
-    return this.sesstionService.create(createSesstionDto);
+  @UseInterceptors(UploadVideoS3('video'))
+  @ApiConsumes(SwaggerConsmes.Multipart)
+  create(@UploadedFile() file:Express.Multer.File, @Body() sesstionDto: SesstionDto) {
+    return this.sesstionService.create(sesstionDto, file);
   }
 
   @Get()
@@ -23,8 +32,8 @@ export class SesstionController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSesstionDto: UpdateSesstionDto) {
-    return this.sesstionService.update(+id, updateSesstionDto);
+  update(@Param('id') id: string, @Body() sesstionDto: UpdateSesstionDto) {
+    return this.sesstionService.update(id, sesstionDto);
   }
 
   @Delete(':id')

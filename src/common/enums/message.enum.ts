@@ -56,6 +56,10 @@ export enum ChapterMessage {
     Updated="سر فصل مورد نظر با موفقعیت آپدیت شد"
 }
 
+export enum SesstionMessage {
+    uploaded="جلسه جدید با موفقعیت اپلود شد"
+}
+
 export enum AuthMessage {
     UnAuthorizedInValid="روش احراز هویت نامعتبر است",
     ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",
@@ -73,7 +77,8 @@ export enum BadRequestMessage {
     InValidEmail="ایمیل وارد شده صحیح نمی باشد",
     InValidPhoen="شماره موبایل وارد شده صحیح نمی باشد",
     InValid="اطلاعات وارد شده صحیح نمی باشد",
-    SomeThingWrong="خطایی رخ داده است لطفا مجددا تلاش کنید"
+    SomeThingWrong="خطایی رخ داده است لطفا مجددا تلاش کنید",
+    InValidVideoFormat="اپلود کنید mp4 mov avi mkv لطفا ویدیو را با یکی از فرمت ها"
 }
 
 export enum ConflictMessage {

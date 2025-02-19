@@ -7,6 +7,7 @@ import { CategoryModule } from '../category/category.module';
 import { BlogModule } from '../blog/blog.module';
 import { CoursesModule } from '../course/course.module';
 import { ChapterModule } from '../chapter/chapter.module';
+import { SesstionModule } from '../sesstion/sesstion.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { ChapterModule } from '../chapter/chapter.module';
     CategoryModule,
     BlogModule,
     CoursesModule,
-    ChapterModule
+    ChapterModule,
+    SesstionModule
   ],
   controllers: [],
   providers: [],

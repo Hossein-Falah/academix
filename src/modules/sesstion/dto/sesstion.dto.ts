@@ -13,4 +13,8 @@ export class SesstionDto {
     @IsBoolean()
     @Transform(({ value }) => value === 'true' || value === true)
     isFree:boolean;
+    @ApiProperty({ type: "string", format: "binary" })
+    video:string;
+    @ApiProperty()
+    chapterId:string;
 }

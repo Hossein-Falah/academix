@@ -20,3 +20,10 @@ export const UploadFileFieldsS3 = (uploadFields:MulterField[]) => {
         storage: memoryStorage()
     }) {}
 }
+
+export const UploadVideoS3 = (fieldName:string) => {
+    return class UploadUtility extends FileInterceptor(fieldName, {
+        storage: memoryStorage(),
+        limits: { fileSize: 50 * 1024 * 1024 }
+    }) {}
+}

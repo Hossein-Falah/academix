@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, UpdateDateColumn } from "t
 import { EntityNames } from "src/common/enums/entity.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 import { ChapterEntity } from "src/modules/chapter/entities/chapter.entity";
+import { PartialType } from "@nestjs/swagger";
 
 @Entity(EntityNames.Sesstion)
 export class SesstionEntity extends BaseEntity {
@@ -22,3 +23,5 @@ export class SesstionEntity extends BaseEntity {
     @UpdateDateColumn()
     updatedAt:Date;
 }
+
+export class UpdateSesstionDto extends PartialType(SesstionEntity) {}
