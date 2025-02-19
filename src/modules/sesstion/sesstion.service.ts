@@ -62,7 +62,17 @@ export class SesstionService {
     })
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} sesstion`;
+  async findOne(id: string) {
+    const sesstion = await this.sesstionRepository.findOneBy({ id });
+    if (!sesstion) throw new NotFoundException(SesstionMessage.NotFound);
+    return sesstion;
+  }
+
+  async remove(id: string) {
+    const sesstion = await this.findOne(id);
+    await this.sesstionRepository.remove(sesstion);
+    return {
+      message: SesstionMessage.Deleted
+    }
   }
 }

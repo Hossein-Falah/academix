@@ -57,7 +57,9 @@ export enum ChapterMessage {
 }
 
 export enum SesstionMessage {
-    uploaded="جلسه جدید با موفقعیت اپلود شد"
+    uploaded="جلسه جدید با موفقعیت اپلود شد",
+    NotFound="جلسه مورد نظر پیدا نشد",
+    Deleted="جلسه مورد نظر با موفقعیت حذف شد",
 }
 
 export enum AuthMessage {
