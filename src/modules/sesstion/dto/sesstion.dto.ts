@@ -16,5 +16,7 @@ export class SesstionDto {
     @ApiProperty({ type: "string", format: "binary" })
     video:string;
     @ApiProperty()
+    duration:string;
+    @ApiProperty()
     chapterId:string;
 }
