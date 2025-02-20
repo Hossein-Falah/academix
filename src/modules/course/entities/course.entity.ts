@@ -4,6 +4,7 @@ import { BaseEntity } from "src/common/abstracts/base.entity";
 import { CourseCategoryEntity } from "./course-category.entity";
 import { UserEntity } from "src/modules/user/entities/user.entity";
 import { ChapterEntity } from "src/modules/chapter/entities/chapter.entity";
+import { CourseCommentEntity } from "./comment.entity";
 // import { CourseStudentEntity } from "./course-student.entity";
 
 @Entity(EntityNames.Course)
@@ -40,6 +41,8 @@ export class CourseEntity extends BaseEntity {
     // students: CourseStudentEntity[];
     @ManyToOne(() => UserEntity, user => user.taughtCourses, { onDelete: "SET NULL" })
     teacher:UserEntity;
+    @OneToMany(() => CourseCommentEntity, comment => comment.course)
+    comments:CourseCommentEntity[];
     @CreateDateColumn()
     createdAt:Date;
     @UpdateDateColumn()

@@ -7,8 +7,11 @@ import { CourseCategoryEntity } from './entities/course-category.entity';
 // import { CourseStudentEntity } from './entities/course-student.entity';
 import { CategoryService } from '../category/category.service';
 import { CategoryEntity } from '../category/entities/category.entity';
-import { CourseController } from './course.controller';
-import { CourseService } from './course.service';
+import { CourseCommentEntity } from './entities/comment.entity';
+import { CourseController } from './controllers/course.controller';
+import { CourseService } from './services/course.service';
+import { CommentController } from './controllers/comment.controller';
+import { CourseCommentService } from './services/comment.service';
 
 @Module({
   imports: [
@@ -17,10 +20,11 @@ import { CourseService } from './course.service';
       CourseEntity,
       CategoryEntity,
       CourseCategoryEntity,
-      // CourseStudentEntity
+      // CourseStudentEntity,
+      CourseCommentEntity
     ])
   ],
-  controllers: [CourseController],
-  providers: [CourseService, CategoryService, S3Service],
+  controllers: [CourseController, CommentController],
+  providers: [CourseService, CategoryService, CourseCommentService, S3Service],
 })
 export class CoursesModule {}

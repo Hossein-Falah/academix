@@ -5,17 +5,17 @@ import { REQUEST } from '@nestjs/core';
 import { isArray } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { CourseDto, FilterCourseDto } from './dto/course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
-import { CourseEntity } from './entities/course.entity';
 import { CategoryMessage, CourseMessage } from 'src/common/enums/message.enum';
-import { S3Service } from '../s3/s3.service';
-import { CategoryService } from '../category/category.service';
-import { CourseCategoryEntity } from './entities/course-category.entity';
 // import { CourseStudentEntity } from './entities/course-student.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { PaginationGenerator, PaginationSolver } from 'src/common/utils/pagination.util';
 import { EntityNames } from 'src/common/enums/entity.enum';
+import { CourseEntity } from '../entities/course.entity';
+import { CourseCategoryEntity } from '../entities/course-category.entity';
+import { S3Service } from 'src/modules/s3/s3.service';
+import { CategoryService } from 'src/modules/category/category.service';
+import { CourseDto, FilterCourseDto } from '../dto/course.dto';
+import { UpdateCourseDto } from '../dto/update-course.dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CourseService {

@@ -88,7 +88,8 @@ export enum ConflictMessage {
     AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
     AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده",
     AlreadyCategory="این دسته بندی قبلا ساخته شده",
-    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید"
+    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید",
+    AlreadyComment="این کامنت قبلا ثبت شده",
 }
 
 export enum ForbiddenMessage {

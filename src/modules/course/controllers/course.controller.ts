@@ -1,17 +1,17 @@
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Query } from '@nestjs/common';
-import { CourseService } from './course.service';
-import { UpdateCourseDto } from './dto/update-course.dto';
-import { CourseDto, FilterCourseDto } from './dto/course.dto';
-import { AuthGuard } from '../auth/guard/auth.guard';
+import { CourseService } from '../services/course.service';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
+import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
 import { UploadFileS3 } from 'src/common/interceptors/upload.interceptor';
 import { Pagination } from 'src/common/decorators/pagination.decorator';
 import { SkipAuth } from 'src/common/decorators/skip-auth.decorator';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { FilterCourse } from 'src/common/decorators/filter.decorator';
+import { CourseDto, FilterCourseDto } from '../dto/course.dto';
+import { UpdateCourseDto } from '../dto/update-course.dto';
 
 @Controller('course')
 @ApiTags('Course')

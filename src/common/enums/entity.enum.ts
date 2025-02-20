@@ -12,5 +12,6 @@ export enum EntityNames {
     CourseCategory="course_category",
     CourseStudent="course_student",
     Chapter="chapter",
-    Sesstion="sesstion"
+    Sesstion="sesstion",
+    CourseComment="course_comment"
 }

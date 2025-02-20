@@ -10,6 +10,7 @@ import { BlogBookmarkEntity } from "src/modules/blog/entities/bookmark.entity";
 import { BlogCommentEntity } from "src/modules/blog/entities/comment.entity";
 // import { CourseStudentEntity } from "src/modules/course/entities/course-student.entity";
 import { CourseEntity } from "src/modules/course/entities/course.entity";
+import { CourseCommentEntity } from "src/modules/course/entities/comment.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity extends BaseEntity {
@@ -51,6 +52,8 @@ export class UserEntity extends BaseEntity {
     blog_bookmarks: BlogBookmarkEntity[];
     @OneToMany(() => BlogCommentEntity, comment => comment.user)
     blog_comments:BlogCommentEntity[];
+    @OneToMany(() => CourseCommentEntity, comment => comment.user)
+    course_comments:CourseCommentEntity[];
     // @OneToMany(() => CourseStudentEntity, courseStudent => courseStudent.student)
     // registeredCourses: CourseStudentEntity[];
     @OneToMany(() => CourseEntity, course => course.teacher, { cascade: true })
