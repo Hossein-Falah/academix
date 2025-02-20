@@ -7,6 +7,8 @@ import { CourseCommentEntity } from "../entities/comment.entity";
 import { CourseCommentDto } from "../dto/comment.dto";
 import { CourseEntity } from "../entities/course.entity";
 import { CommentMessage, ConflictMessage, CourseMessage } from "src/common/enums/message.enum";
+import { PaginationDto } from "src/common/dto/pagination.dto";
+import { PaginationGenerator, PaginationSolver } from "src/common/utils/pagination.util";
 
 @Injectable({ scope: Scope.REQUEST })
 export class CourseCommentService {
@@ -38,6 +40,36 @@ export class CourseCommentService {
 
         return {
             message: CommentMessage.Created
+        }
+    }
+
+    async find(paginationDto: PaginationDto) {
+        const { page, limit, skip } = PaginationSolver(paginationDto);
+        const [comments, count] = await this.courseCommentRepository.findAndCount({
+            where: {},
+            relations: {
+                course: true,
+                user: { profile: true }
+            },
+            select: {
+                course: {
+                    title: true
+                },
+                user: {
+                    username: true,
+                    profile: {
+                        nike_name: true
+                    }
+                }
+            },
+            take: limit,
+            skip,
+            order: { id: 'DESC' }
+        });
+
+        return {
+            pagination: PaginationGenerator(count, page, limit),
+            comments
         }
     }
 
