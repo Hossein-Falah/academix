@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { Repository } from "typeorm";
 import { REQUEST } from "@nestjs/core";
-import { ConflictException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CourseCommentEntity } from "../entities/comment.entity";
 import { CourseCommentDto } from "../dto/comment.dto";
@@ -73,6 +73,17 @@ export class CourseCommentService {
         }
     }
 
+    async accept(id:string) {
+        const comment = await this.checkExistById(id);
+        if (comment.accepted) throw new BadRequestException(CommentMessage.AlreadyAccept);
+        comment.accepted = true;
+        await this.courseCommentRepository.save(comment);
+
+        return {
+            message: CommentMessage.Apccepted
+        }
+    }
+
     async checkExistCourseWithText(text: string) {
         const comment = await this.courseCommentRepository.findOneBy({ text });
         if (comment) throw new ConflictException(ConflictMessage.AlreadyComment);
@@ -82,5 +93,11 @@ export class CourseCommentService {
         const course = await this.courseRepository.findOneBy({ id });
         if (!course) throw new NotFoundException(CourseMessage.NotFound);
         return course;
+    }
+
+    async checkExistById(id:string) {
+        const comment = await this.courseCommentRepository.findOneBy({ id });
+        if (!comment) throw new NotFoundException(CommentMessage.NotFound);
+        return comment;
     }
 }
