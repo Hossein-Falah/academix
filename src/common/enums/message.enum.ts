@@ -75,12 +75,20 @@ export enum AuthMessage {
     UnBlock="حساب کاربری شما رفع مسدود شد"
 }
 
+export enum DiscountMessage {
+    Created="کد تخفیف جدید با موفقعیت ساخته شد",
+    InValidDiscountField="شما باید یکی از فیلد های مبلغ یا درصد را پر کنید",
+    AlreadyDiscount="این کد تخفیف قبلا ثبت شده",
+    NotFound="کد تخفیف مورد نظر پیدا نشد",
+    Removed="کد تخفیف مورد نظر با موفقعیت حذف شد"
+}
+
 export enum BadRequestMessage {
     InValidEmail="ایمیل وارد شده صحیح نمی باشد",
     InValidPhoen="شماره موبایل وارد شده صحیح نمی باشد",
     InValid="اطلاعات وارد شده صحیح نمی باشد",
     SomeThingWrong="خطایی رخ داده است لطفا مجددا تلاش کنید",
-    InValidVideoFormat="اپلود کنید mp4 mov avi mkv لطفا ویدیو را با یکی از فرمت ها"
+    InValidVideoFormat="اپلود کنید mp4 mov avi mkv لطفا ویدیو را با یکی از فرمت ها",
 }
 
 export enum ConflictMessage {
