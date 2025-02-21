@@ -84,6 +84,17 @@ export class CourseCommentService {
         }
     }
 
+    async reject(id:string) {
+        const comment = await this.checkExistById(id);
+        if (!comment.accepted) throw new BadRequestException(CommentMessage.AlreadyRejecte)
+        comment.accepted = false;
+    await this.courseCommentRepository.save(comment);
+
+    return {
+        message: CommentMessage.Rejected
+    }
+    }
+
     async checkExistCourseWithText(text: string) {
         const comment = await this.courseCommentRepository.findOneBy({ text });
         if (comment) throw new ConflictException(ConflictMessage.AlreadyComment);

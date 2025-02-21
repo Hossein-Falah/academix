@@ -33,4 +33,10 @@ export class CommentController {
     accept(@Param('id') id: string) {
         return this.courseCommentService.accept(id);
     }
+
+    @Put("/reject/:id")
+    @CanAccess(Roles.Admin, Roles.Teacher)
+    reject(@Param("id") id:string) {
+        return this.courseCommentService.reject(id);
+    }
 }
