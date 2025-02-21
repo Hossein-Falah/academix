@@ -1,5 +1,5 @@
 import { DeepPartial, Repository } from 'typeorm';
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiscountDto } from './dto/discount.dto';
 import { DiscountEntity } from './entities/discount.entity';
@@ -44,16 +44,30 @@ export class DiscountService {
     }
   }
 
-  findAll() {
-    return `This action returns all discount`;
+  async findAll() {
+    return await this.discountRepository.find();
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} discount`;
+  async remove(id: string) {
+    const discount = await this.discountRepository.findOneBy({ id });
+    if (!discount) throw new NotFoundException(DiscountMessage.NotFound);
+    
+    await this.discountRepository.delete({ id });
+    
+    return {
+      message: DiscountMessage.Removed
+    }
   }
 
   async checkExistCode(code:string) {
     const discount = await this.discountRepository.findOneBy({ code });
     if (discount) throw new ConflictException(DiscountMessage.AlreadyDiscount);
   }
+
+  async findOneByCode(code:string) {
+    const discount = await this.discountRepository.findOneBy({ code });
+    if (!discount) throw new NotFoundException(DiscountMessage.NotFound);
+    return discount;
+  }
+
 }

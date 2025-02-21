@@ -78,7 +78,9 @@ export enum AuthMessage {
 export enum DiscountMessage {
     Created="کد تخفیف جدید با موفقعیت ساخته شد",
     InValidDiscountField="شما باید یکی از فیلد های مبلغ یا درصد را پر کنید",
-    AlreadyDiscount="این کد تخفیف قبلا ثبت شده"
+    AlreadyDiscount="این کد تخفیف قبلا ثبت شده",
+    NotFound="کد تخفیف مورد نظر پیدا نشد",
+    Removed="کد تخفیف مورد نظر با موفقعیت حذف شد"
 }
 
 export enum BadRequestMessage {
