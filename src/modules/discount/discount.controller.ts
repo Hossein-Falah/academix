@@ -1,15 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
 import { DiscountService } from './discount.service';
-import { CreateDiscountDto } from './dto/create-discount.dto';
-import { UpdateDiscountDto } from './dto/update-discount.dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { CanAccess } from 'src/common/decorators/role.decorator';
+import { Roles } from 'src/common/enums/role.enum';
+import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
+import { DiscountDto } from './dto/discount.dto';
 
 @Controller('discount')
+@ApiTags("discount")
+@ApiBearerAuth("Authorization")
+@UseGuards(AuthGuard)
+@CanAccess(Roles.Admin)
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
   @Post()
-  create(@Body() createDiscountDto: CreateDiscountDto) {
-    return this.discountService.create(createDiscountDto);
+  @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
+  create(@Body() discountDto: DiscountDto) {
+    return this.discountService.create(discountDto);
   }
 
   @Get()
@@ -17,18 +26,8 @@ export class DiscountController {
     return this.discountService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.discountService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDiscountDto: UpdateDiscountDto) {
-    return this.discountService.update(+id, updateDiscountDto);
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.discountService.remove(+id);
+    return this.discountService.remove(id);
   }
 }
