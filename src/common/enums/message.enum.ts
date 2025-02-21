@@ -40,6 +40,28 @@ export enum CommentMessage {
     Remove="نظر شما با موفقعیت حذف شد"
 }
 
+export enum CourseMessage {
+    Created="دوره جدید با موفقعیت ساخته شد",
+    AlreadyCourse="همچین دوره ای قبل ثبت شده",
+    NotFound="دوره مورد نظر پیدا نشد",
+    Removed="دوره با موفقعیت حذف شد",
+    Updated="دوره با موفقعیت ویرایش شد"
+}
+
+export enum ChapterMessage {
+    Created="سر فصل جدید با موفقعیت ساخته شد",
+    NotFound="سر فصل مورد نظر پیدا نشد",
+    AleradyChapter="سر فصل مورد نظر از قبل ساخته شده",
+    Removed="سر فصل مورد نظر با موفقعیت حذف شد",
+    Updated="سر فصل مورد نظر با موفقعیت آپدیت شد"
+}
+
+export enum SesstionMessage {
+    uploaded="جلسه جدید با موفقعیت اپلود شد",
+    NotFound="جلسه مورد نظر پیدا نشد",
+    Deleted="جلسه مورد نظر با موفقعیت حذف شد",
+}
+
 export enum AuthMessage {
     UnAuthorizedInValid="روش احراز هویت نامعتبر است",
     ExpiredCode="کد تایید منقضی شده لطفا مجددا تلاش نمایید",
@@ -57,7 +79,8 @@ export enum BadRequestMessage {
     InValidEmail="ایمیل وارد شده صحیح نمی باشد",
     InValidPhoen="شماره موبایل وارد شده صحیح نمی باشد",
     InValid="اطلاعات وارد شده صحیح نمی باشد",
-    SomeThingWrong="خطایی رخ داده است لطفا مجددا تلاش کنید"
+    SomeThingWrong="خطایی رخ داده است لطفا مجددا تلاش کنید",
+    InValidVideoFormat="اپلود کنید mp4 mov avi mkv لطفا ویدیو را با یکی از فرمت ها"
 }
 
 export enum ConflictMessage {
@@ -65,7 +88,8 @@ export enum ConflictMessage {
     AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
     AlreadyPhone="این شماره تلفن قبلا توسط شخصی دیگر استفاده شده",
     AlreadyCategory="این دسته بندی قبلا ساخته شده",
-    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید"
+    AlreadySlug="این مسیر قبلا ساخته شده لطفا مسیر جدیدی را انتخاب کنید",
+    AlreadyComment="این کامنت قبلا ثبت شده",
 }
 
 export enum ForbiddenMessage {
