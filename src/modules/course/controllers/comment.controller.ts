@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "src/modules/auth/guard/auth.guard";
 import { SwaggerConsmes } from "src/common/enums/swagger.consumes.enum";
@@ -36,7 +36,13 @@ export class CommentController {
 
     @Put("/reject/:id")
     @CanAccess(Roles.Admin, Roles.Teacher)
-    reject(@Param("id") id:string) {
+    reject(@Param("id") id: string) {
         return this.courseCommentService.reject(id);
+    }
+
+    @Delete("/delete/:id")
+    @CanAccess(Roles.Admin, Roles.Teacher)
+    delete(@Param("id") id: string) {
+        return this.courseCommentService.delete(id);
     }
 }

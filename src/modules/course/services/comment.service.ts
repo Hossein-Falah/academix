@@ -16,12 +16,12 @@ export class CourseCommentService {
         @InjectRepository(CourseEntity) private courseRepository: Repository<CourseEntity>,
         @InjectRepository(CourseCommentEntity) private courseCommentRepository: Repository<CourseCommentEntity>,
         @Inject(REQUEST) private request: Request
-    ) {}
+    ) { }
 
     async create(commentDto: CourseCommentDto) {
         const { id: userId } = this.request.user;
 
-        const { courseId, text, parentId} = commentDto;
+        const { courseId, text, parentId } = commentDto;
 
         await this.checkExistCourseWithText(text);
         await this.checkExistCourseById(courseId);
@@ -73,7 +73,7 @@ export class CourseCommentService {
         }
     }
 
-    async accept(id:string) {
+    async accept(id: string) {
         const comment = await this.checkExistById(id);
         if (comment.accepted) throw new BadRequestException(CommentMessage.AlreadyAccept);
         comment.accepted = true;
@@ -84,15 +84,25 @@ export class CourseCommentService {
         }
     }
 
-    async reject(id:string) {
+    async reject(id: string) {
         const comment = await this.checkExistById(id);
         if (!comment.accepted) throw new BadRequestException(CommentMessage.AlreadyRejecte)
         comment.accepted = false;
-    await this.courseCommentRepository.save(comment);
+        await this.courseCommentRepository.save(comment);
 
-    return {
-        message: CommentMessage.Rejected
+        return {
+            message: CommentMessage.Rejected
+        }
     }
+
+    async delete(id:string) {
+        await this.checkExistById(id);
+
+        await this.courseCommentRepository.delete({ id });
+
+        return {
+            message: CommentMessage.Remove
+        }
     }
 
     async checkExistCourseWithText(text: string) {
@@ -100,13 +110,13 @@ export class CourseCommentService {
         if (comment) throw new ConflictException(ConflictMessage.AlreadyComment);
     }
 
-    async checkExistCourseById(id:string) {
+    async checkExistCourseById(id: string) {
         const course = await this.courseRepository.findOneBy({ id });
         if (!course) throw new NotFoundException(CourseMessage.NotFound);
         return course;
     }
 
-    async checkExistById(id:string) {
+    async checkExistById(id: string) {
         const comment = await this.courseCommentRepository.findOneBy({ id });
         if (!comment) throw new NotFoundException(CommentMessage.NotFound);
         return comment;
