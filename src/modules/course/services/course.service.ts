@@ -122,7 +122,9 @@ export class CourseService {
     const course = await this.courseRepository.findOne({
       where: { id },
       relations: {
-        teacher: { profile: true }
+        teacher: { profile: true },
+        comments: { user: { profile: true } },
+        chapters: true
       },
       select: {
         id:true,
@@ -146,12 +148,30 @@ export class CourseService {
             image_profile:true
           }
         },
+        comments: {
+          id: true,
+          text: true,
+          accepted: true,
+          user: {
+            username: true,
+            email: true,
+            phone: true,
+            profile: {
+              nike_name: true,
+              image_profile: true
+            }
+          }
+        },
+        categories: true,
+        chapters: true,
         createdAt:true,
         updatedAt:true
       }
     })
 
     if (!course) throw new NotFoundException(CourseMessage.NotFound);
+
+    course.comments = course.comments.filter(comment => comment.accepted);
 
     await this.courseRepository.increment({ id }, "views", 1);
 

@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { REQUEST } from "@nestjs/core";
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -95,7 +95,7 @@ export class CourseCommentService {
         }
     }
 
-    async delete(id:string) {
+    async delete(id: string) {
         await this.checkExistById(id);
 
         await this.courseCommentRepository.delete({ id });
