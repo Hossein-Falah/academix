@@ -9,6 +9,7 @@ import { CoursesModule } from '../course/course.module';
 import { ChapterModule } from '../chapter/chapter.module';
 import { SesstionModule } from '../sesstion/sesstion.module';
 import { DiscountModule } from '../discount/discount.module';
+import { BasketModule } from '../basket/basket.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { DiscountModule } from '../discount/discount.module';
     CoursesModule,
     ChapterModule,
     SesstionModule,
-    DiscountModule
+    DiscountModule,
+    BasketModule
   ],
   controllers: [],
   providers: [],
