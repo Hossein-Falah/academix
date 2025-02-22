@@ -76,16 +76,23 @@ export enum AuthMessage {
 }
 
 export enum DiscountMessage {
+    ApplyDiscount="کد تخفیف با موفقعیت اعمال شد",
     Created="کد تخفیف جدید با موفقعیت ساخته شد",
     InValidDiscountField="شما باید یکی از فیلد های مبلغ یا درصد را پر کنید",
     AlreadyDiscount="این کد تخفیف قبلا ثبت شده",
     NotFound="کد تخفیف مورد نظر پیدا نشد",
-    Removed="کد تخفیف مورد نظر با موفقعیت حذف شد"
+    Removed="کد تخفیف مورد نظر با موفقعیت حذف شد",
+    NotActive="این کد تخفیف غیر فعال می باشد",
+    UsegeLimit="متاسفانه تعداد استفاده از این کد تخفیف به پایان رسیده است",
+    Expires_code="متاسفانه این کد تخفیف منقضی شده است",
+    AlreadyUseDiscount="شما در حال حاضر از این کد تخفیف استفاده کرده اید"
 }
 
 export enum BasketMessage {
     AddToBasket="دوره با موفقعیت به سبد خرید شما اضافه شد",
     AlreadyCourse="این دوره قبلا به سبد خرید شما اضافه شده",
+    NotFound="هیچ دوره ای در سبد خرید شما وجود ندارد",
+    Removed="دوره مورد نظر با موفقعیت از سبد خرید شما حذف شد"
 }
 
 export enum BadRequestMessage {

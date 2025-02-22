@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { BasketDto, DiscountBasketDto } from './dto/basket.dto';
 import { BasketEntity } from './entities/basket.entity';
 import { CourseService } from '../course/services/course.service';
@@ -40,6 +40,58 @@ export class BasketService {
 
     return {
       message: BasketMessage.AddToBasket
+    }
+  }
+
+  async applyDiscount(discountBasketDto:DiscountBasketDto) {
+    const { id:userId } = this.request.user; 
+    const { code } = discountBasketDto;
+
+    const discount = await this.discountService.findOneByCode(code);
+
+    if (!discount.active) {
+      throw new BadRequestException(DiscountMessage.NotActive);
+    }
+
+    if (discount.limit && discount.limit <= discount.usege) {
+      throw new BadRequestException(DiscountMessage.UsegeLimit);
+    }
+
+    if (discount?.expires_in && discount?.expires_in?.getTime() <= new Date().getTime()) {
+      throw new BadRequestException(DiscountMessage.Expires_code);
+    }
+
+    const userBasketDiscount = await this.basketRepository.findOneBy({
+      discountId: discount.id,
+      userId
+    });
+
+    if (userBasketDiscount) {
+      throw new BadRequestException(DiscountMessage.AlreadyUseDiscount)
+    }
+
+    const basketItem = this.basketRepository.create({
+      courseId: discount.courseId,
+      discountId: discount.id,
+    });
+
+    await this.basketRepository.save(basketItem);
+
+    return {
+      message: DiscountMessage.ApplyDiscount
+    }
+  }
+
+  async removeFromBasketId(id:string) {
+    let basketItem = await this.basketRepository.findOneBy({ id });
+    if (basketItem) {
+      await this.basketRepository.delete({ id: basketItem.id });
+    } else {
+      throw new NotFoundException(BasketMessage.NotFound);  
+    }
+
+    return {
+      message: BasketMessage.Removed
     }
   }
 

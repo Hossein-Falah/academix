@@ -19,6 +19,8 @@ export class DiscountEntity extends BaseEntity {
     usege:number;
     @Column({ default: true })
     active:boolean;
+    @Column({ nullable: true })
+    courseId:string;
     @OneToMany(() => BasketEntity, basket => basket.discount)
     baskets:BasketEntity[];
 }
