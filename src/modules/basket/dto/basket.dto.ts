@@ -7,5 +7,7 @@ export class BasketDto {
 
 export class DiscountBasketDto {
     @ApiProperty()
+    courseId:string;
+    @ApiProperty()
     code:string;
 }

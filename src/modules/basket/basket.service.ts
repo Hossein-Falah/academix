@@ -18,6 +18,82 @@ export class BasketService {
     private discountService:DiscountService
   ) {}
   
+  async getBasket() {
+    const { id: userId } = this.request.user;
+
+    let courses = [];
+    let discounts = [];
+    let finalAmount = 0;
+    let totalPrice = 0;
+    let totalDiscountAmount = 0;
+    
+    const items = await this.basketRepository.find({
+      where: { userId },
+      relations: {
+        course: true,
+        discount: true
+      }
+    });
+
+    if (!items.length) throw new NotFoundException(BasketMessage.NotFound);
+
+    for (const item of items) {
+      const coursePrice = +item.course.price;
+      let finalPrice = coursePrice;
+      let discountAmount = 0;
+
+      if (item.discount && item.discount.active) {
+        if (item.discount.expires_in && item.discount.expires_in.getTime() <= Date.now()) {
+          throw new BadRequestException(DiscountMessage.Expires_code);
+        } else {
+          if (item.discount.percent != null) {
+            discountAmount = coursePrice * ((+item.discount.percent) / 100);
+          } else if (item.discount.amount != null) {
+            discountAmount = +item.discount.amount;
+          }
+          finalPrice = coursePrice - discountAmount;
+          if (finalPrice < 0) {
+            finalPrice = 0;
+          }
+        }
+      }
+
+      totalPrice += coursePrice;
+      totalDiscountAmount += discountAmount;
+      finalAmount += finalPrice;
+
+      courses.push({
+        id: item.id,
+        courseId: item.courseId,
+        title: item.course.title,
+        price: coursePrice,
+        finalPrice,
+        discountAmount,
+        isFree: item.course.isFree,
+        isPublished: item.course.isPublished
+      });
+
+      if (item.discount) {
+        discounts.push({
+          id: item.discount.id,
+          code: item.discount.code,
+          percent: item.discount.percent,
+          amount: item.discount.amount,
+          expires_in: item.discount.expires_in,
+          active: item.discount.active
+        });
+      }
+    }
+
+    return {
+      courses,
+      discounts,
+      totalPrice,
+      totalDiscountAmount,
+      finalAmount
+    }
+  }
+
   async addToBasket(basketDto: BasketDto) {
     const { id: userId } = this.request.user;
     const { courseId } = basketDto;
@@ -45,7 +121,7 @@ export class BasketService {
 
   async applyDiscount(discountBasketDto:DiscountBasketDto) {
     const { id:userId } = this.request.user; 
-    const { code } = discountBasketDto;
+    const { code, courseId } = discountBasketDto;
 
     const discount = await this.discountService.findOneByCode(code);
 
@@ -71,8 +147,9 @@ export class BasketService {
     }
 
     const basketItem = this.basketRepository.create({
-      courseId: discount.courseId,
+      courseId: courseId,
       discountId: discount.id,
+      userId
     });
 
     await this.basketRepository.save(basketItem);

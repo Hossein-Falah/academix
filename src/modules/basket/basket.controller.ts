@@ -13,7 +13,7 @@ export class BasketController {
 
   @Get()
   basket() {
-
+    return this.basketService.getBasket();
   }
 
   @Post()

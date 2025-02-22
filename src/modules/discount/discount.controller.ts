@@ -11,22 +11,24 @@ import { DiscountDto } from './dto/discount.dto';
 @ApiTags("discount")
 @ApiBearerAuth("Authorization")
 @UseGuards(AuthGuard)
-@CanAccess(Roles.Admin)
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
-
+  
   @Post()
+  @CanAccess(Roles.Admin)
   @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
   create(@Body() discountDto: DiscountDto) {
     return this.discountService.create(discountDto);
   }
-
+  
   @Get()
+  @CanAccess(Roles.Admin)
   findAll() {
     return this.discountService.findAll();
   }
-
+  
   @Delete(':id')
+  @CanAccess(Roles.Admin)
   remove(@Param('id') id: string) {
     return this.discountService.remove(id);
   }
