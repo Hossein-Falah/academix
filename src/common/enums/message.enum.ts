@@ -83,6 +83,11 @@ export enum DiscountMessage {
     Removed="کد تخفیف مورد نظر با موفقعیت حذف شد"
 }
 
+export enum BasketMessage {
+    AddToBasket="دوره با موفقعیت به سبد خرید شما اضافه شد",
+    AlreadyCourse="این دوره قبلا به سبد خرید شما اضافه شده",
+}
+
 export enum BadRequestMessage {
     InValidEmail="ایمیل وارد شده صحیح نمی باشد",
     InValidPhoen="شماره موبایل وارد شده صحیح نمی باشد",

@@ -14,5 +14,6 @@ export enum EntityNames {
     Chapter="chapter",
     Sesstion="sesstion",
     CourseComment="course_comment",
-    Discount="discount"
+    Discount="discount",
+    Basket="basket"
 }
