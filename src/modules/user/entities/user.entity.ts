@@ -12,6 +12,8 @@ import { BlogCommentEntity } from "src/modules/blog/entities/comment.entity";
 import { CourseEntity } from "src/modules/course/entities/course.entity";
 import { CourseCommentEntity } from "src/modules/course/entities/comment.entity";
 import { BasketEntity } from "src/modules/basket/entities/basket.entity";
+import { OrderEntity } from "src/modules/order/entities/order.entity";
+import { PaymentEntity } from "src/modules/payment/entities/payment.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity extends BaseEntity {
@@ -61,6 +63,10 @@ export class UserEntity extends BaseEntity {
     // registeredCourses: CourseStudentEntity[];
     @OneToMany(() => CourseEntity, course => course.teacher, { cascade: true })
     taughtCourses:CourseEntity[];
+    @OneToMany(() => OrderEntity, order => order.user)
+    orders:OrderEntity[];
+    @OneToOne(() => PaymentEntity, payment => payment.user)
+    payments:PaymentEntity;
     @CreateDateColumn()
     created_at:Date;
     @UpdateDateColumn()
