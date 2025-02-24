@@ -1,17 +1,16 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
 import { OrderService } from './order.service';
+import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 
 @Controller('order')
+@ApiTags("orders")
+@AuthDecorator()
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get()
-  findAll() {
-    return this.orderService.findAll();
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(id);
+  @Get("/user")
+  findUserOrders() {
+    return this.orderService.findUserOrders();
   }
 }

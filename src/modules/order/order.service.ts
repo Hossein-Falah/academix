@@ -63,8 +63,10 @@ export class OrderService {
     }
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findUserOrders() {
+    const { id: userId } = this.request.user;
+
+    return this.orderRepository.find({ where: { userId }});
   }
 
   async findOne(id: string) {
