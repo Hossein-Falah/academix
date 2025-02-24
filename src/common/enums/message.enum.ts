@@ -88,6 +88,15 @@ export enum DiscountMessage {
     AlreadyUseDiscount="شما در حال حاضر از این کد تخفیف استفاده کرده اید"
 }
 
+export enum PaymentMessage {
+    AlreadyPayment="محصول قبلا خریداری شده",
+    bought="محصول با موفقعیت خریداری شد"
+}
+
+export enum OrderMessage {
+    NotFound="سفارش مورد نظر پیدا نشد"
+}
+
 export enum BasketMessage {
     AddToBasket="دوره با موفقعیت به سبد خرید شما اضافه شد",
     AlreadyCourse="این دوره قبلا به سبد خرید شما اضافه شده",

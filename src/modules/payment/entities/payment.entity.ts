@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne } from "typeorm";
 import { EntityNames } from "src/common/enums/entity.enum";
 import { BaseEntity } from "src/common/abstracts/base.entity";
 import { OrderEntity } from "src/modules/order/entities/order.entity";
@@ -16,7 +16,7 @@ export class PaymentEntity extends BaseEntity {
     userId:string;
     @Column()
     orderId:string;
-    @ManyToOne(() => OrderEntity, order => order.payments, {
+    @OneToOne(() => OrderEntity, order => order.payments, {
         onDelete: "CASCADE"
     })
     order:OrderEntity;

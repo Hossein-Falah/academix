@@ -190,4 +190,14 @@ export class BasketService {
       message: DiscountMessage.Removed
     }
   }
+
+  async clearBasket(userId:string) {
+    const items = await this.basketRepository.find({
+      where: { userId }
+    })
+
+    if (!items.length) throw new NotFoundException(BasketMessage.NotFound);
+
+    await this.basketRepository.delete({ userId });
+  }
 }

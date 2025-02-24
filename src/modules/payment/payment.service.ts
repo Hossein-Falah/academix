@@ -2,19 +2,22 @@ import { Request } from 'express';
 import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { PaymentDto } from './dto/payment.dto';
 import { BasketService } from '../basket/basket.service';
 import { StripeService } from '../http/stripe.service';
 import { PaymentEntity } from './entities/payment.entity';
-import { BasketMessage } from 'src/common/enums/message.enum';
+import { BasketMessage, OrderMessage, PaymentMessage } from 'src/common/enums/message.enum';
 import { OrderService } from '../order/order.service';
+import { OrderStatus } from 'src/common/enums/status.enum';
+import { OrderEntity } from '../order/entities/order.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class PaymentService {
   constructor(
     @Inject(REQUEST) private request:Request,
     @InjectRepository(PaymentEntity) private paymentRepository:Repository<PaymentEntity>,
+    @InjectRepository(OrderEntity) private orderRepository:Repository<OrderEntity>,
     private basketService:BasketService,
     private stripeService:StripeService,
     private orderService:OrderService
@@ -43,29 +46,62 @@ export class PaymentService {
         message: "مبلغ با قیمت 0 تومان با موفقعیت پرداخت شد"
       }
     } else {
-      const sesstion = await this.stripeService.createCheckoutSession(
+      const session = await this.stripeService.createCheckoutSession(
         basket.courses,
         basket.finalAmount,
         userId
       )
 
-      payment.invoice_number = sesstion.id;
+      payment.invoice_number = session.id;
 
       await this.paymentRepository.save(payment);
 
-      return { gatewayUrl: sesstion.url, sesstionId: sesstion.id }
+      return { gatewayUrl: session.url, sessionId: session.id }
     }
   }
 
-  async cancelPayment(sesstionId:string) {
-    if (!sesstionId) throw new NotFoundException("sesstion ID is required");
+  async verifyPayment(sessionId:string) {
+    if (!sessionId) throw new NotFoundException("Session ID is required");
+    const payment = await this.findPaymentBySessionId(sessionId)
 
-    const payment = await this.paymentRepository.findOneBy({ invoice_number: sesstionId });
-    if (!payment) {
-      throw new NotFoundException(`Payment not found for sesstion Id:${sesstionId}`)
+    if (payment.status) {
+      throw new ConflictException(PaymentMessage.AlreadyPayment);
     }
-    payment.status = false;
 
+    await this.paymentRepository.manager.transaction(async manager => {
+      payment.status = true;
+      await manager.save(payment);
+
+      const order = await manager.findOne(OrderEntity, { where: { id: payment.orderId }});
+      if (!order) throw new NotFoundException(OrderMessage.NotFound);
+      order.status = OrderStatus.Paid;
+      await manager.save(order);
+
+      const userId = this.request.user.id;
+
+      await this.basketService.clearBasket(userId);
+    });
+
+    return {
+      message: PaymentMessage.bought
+    }
+  }
+
+  async cancelPayment(sessionId:string) {
+    if (!sessionId) throw new NotFoundException("Session ID is required");
+
+    const payment = await this.findPaymentBySessionId(sessionId);
+
+    payment.status = false;
+    
     return await this.paymentRepository.save(payment);
+  }
+
+  private async findPaymentBySessionId(sessionId:string): Promise<PaymentEntity> {
+    const payment = await this.paymentRepository.findOneBy({ invoice_number: sessionId });
+    if (!payment) {
+      throw new NotFoundException(`Payment not found for sesstion Id:${sessionId}`)
+    }
+    return payment;
   }
 }

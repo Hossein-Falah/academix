@@ -65,7 +65,7 @@ export class UserEntity extends BaseEntity {
     taughtCourses:CourseEntity[];
     @OneToMany(() => OrderEntity, order => order.user)
     orders:OrderEntity[];
-    @OneToOne(() => PaymentEntity, payment => payment.user)
+    @OneToMany(() => PaymentEntity, payment => payment.user)
     payments:PaymentEntity;
     @CreateDateColumn()
     created_at:Date;

@@ -15,8 +15,13 @@ export class PaymentController {
     return this.paymentService.getGatewayUrl(paymentDto)
   }
 
+  @Get("/success")
+  async verifyPayment(@Query("sessionId") sessionId:string) {
+    return this.paymentService.verifyPayment(sessionId);
+  }
+
   @Get("/cancel")
-  cancelPayment(@Query("sesstion_id") sesstionId:string) {
-    return this.paymentService.cancelPayment(sesstionId);
+  cancelPayment(@Query("sessionId") sessionId:string) {
+    return this.paymentService.cancelPayment(sessionId);
   }
 }
