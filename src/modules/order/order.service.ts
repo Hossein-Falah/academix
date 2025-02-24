@@ -69,6 +69,10 @@ export class OrderService {
     return this.orderRepository.find({ where: { userId }});
   }
 
+  async findAllOrderForAdmin() {
+    return this.orderRepository.find();
+  }
+
   async findOne(id: string) {
     const order = await this.orderRepository.findOneBy({ id });
     if (!order) throw new NotFoundException(OrderMessage.NotFound);
