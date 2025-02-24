@@ -10,6 +10,9 @@ import { ChapterModule } from '../chapter/chapter.module';
 import { SesstionModule } from '../sesstion/sesstion.module';
 import { DiscountModule } from '../discount/discount.module';
 import { BasketModule } from '../basket/basket.module';
+import { PaymentModule } from '../payment/payment.module';
+import { OrderModule } from '../order/order.module';
+import { HttpApiModule } from '../http/http.module';
 
 @Module({
   imports: [
@@ -22,7 +25,10 @@ import { BasketModule } from '../basket/basket.module';
     ChapterModule,
     SesstionModule,
     DiscountModule,
-    BasketModule
+    BasketModule,
+    PaymentModule,
+    OrderModule,
+    HttpApiModule
   ],
   controllers: [],
   providers: [],
