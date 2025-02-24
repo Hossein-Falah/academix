@@ -9,11 +9,7 @@ export class StripeService {
         this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
     }
 
-    async createCheckoutSession(courses:any[], amount:number, userId:string) {
-        console.log(courses);
-        console.log(amount);
-        console.log(userId);
-        
+    async createCheckoutSession(courses:any[], amount:number, userId:string) {        
         const sesstion = await this.stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: courses.map(course => ({
@@ -27,17 +23,13 @@ export class StripeService {
                 quantity: 1
             })),
             mode: "payment",
-            success_url: `${process.env.BASE_URL}/success?sesstion_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.BASE_URL}/cancel`,
+            success_url: `${process.env.BASE_URL}/payment/success?sesstion_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.BASE_URL}/payment/cancel`,
             metadata: {
                 userId
             }
         });
 
         return sesstion;
-    }
-    
-    async verifyRequest() {
-
     }
 }

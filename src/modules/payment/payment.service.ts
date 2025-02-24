@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { PaymentDto } from './dto/payment.dto';
 import { BasketService } from '../basket/basket.service';
 import { StripeService } from '../http/stripe.service';
@@ -21,7 +21,7 @@ export class PaymentService {
   ) {}
 
   async getGatewayUrl(paymentDto: PaymentDto) {
-    const { id: userId, email, phone } = this.request.user;
+    const { id: userId } = this.request.user;
 
     const basket = await this.basketService.getBasket();
     if (!basket.courses.length) throw new BadRequestException(BasketMessage.NotFound);
@@ -49,7 +49,23 @@ export class PaymentService {
         userId
       )
 
+      payment.invoice_number = sesstion.id;
+
+      await this.paymentRepository.save(payment);
+
       return { gatewayUrl: sesstion.url, sesstionId: sesstion.id }
     }
+  }
+
+  async cancelPayment(sesstionId:string) {
+    if (!sesstionId) throw new NotFoundException("sesstion ID is required");
+
+    const payment = await this.paymentRepository.findOneBy({ invoice_number: sesstionId });
+    if (!payment) {
+      throw new NotFoundException(`Payment not found for sesstion Id:${sesstionId}`)
+    }
+    payment.status = false;
+
+    return await this.paymentRepository.save(payment);
   }
 }
