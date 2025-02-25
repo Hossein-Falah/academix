@@ -8,10 +8,12 @@ import { BlogEntity } from "src/modules/blog/entities/blog.entity";
 import { BlogLikesEntity } from "src/modules/blog/entities/like.entity";
 import { BlogBookmarkEntity } from "src/modules/blog/entities/bookmark.entity";
 import { BlogCommentEntity } from "src/modules/blog/entities/comment.entity";
-// import { CourseStudentEntity } from "src/modules/course/entities/course-student.entity";
+import { CourseStudentEntity } from "src/modules/course/entities/course-student.entity";
 import { CourseEntity } from "src/modules/course/entities/course.entity";
 import { CourseCommentEntity } from "src/modules/course/entities/comment.entity";
 import { BasketEntity } from "src/modules/basket/entities/basket.entity";
+import { OrderEntity } from "src/modules/order/entities/order.entity";
+import { PaymentEntity } from "src/modules/payment/entities/payment.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity extends BaseEntity {
@@ -57,10 +59,14 @@ export class UserEntity extends BaseEntity {
     course_comments:CourseCommentEntity[];
     @OneToMany(() => BasketEntity, basket => basket.user)
     basket:BasketEntity[];
-    // @OneToMany(() => CourseStudentEntity, courseStudent => courseStudent.student)
-    // registeredCourses: CourseStudentEntity[];
+    @OneToMany(() => CourseStudentEntity, courseStudent => courseStudent.user)
+    registeredCourses: CourseStudentEntity[];
     @OneToMany(() => CourseEntity, course => course.teacher, { cascade: true })
     taughtCourses:CourseEntity[];
+    @OneToMany(() => OrderEntity, order => order.user)
+    orders:OrderEntity[];
+    @OneToMany(() => PaymentEntity, payment => payment.user)
+    payments:PaymentEntity;
     @CreateDateColumn()
     created_at:Date;
     @UpdateDateColumn()

@@ -85,7 +85,17 @@ export enum DiscountMessage {
     NotActive="این کد تخفیف غیر فعال می باشد",
     UsegeLimit="متاسفانه تعداد استفاده از این کد تخفیف به پایان رسیده است",
     Expires_code="متاسفانه این کد تخفیف منقضی شده است",
-    AlreadyUseDiscount="شما در حال حاضر از این کد تخفیف استفاده کرده اید"
+    AlreadyUseDiscount="شما در حال حاضر از این کد تخفیف استفاده کرده اید",
+    AlreadyAppliedToCourse="این تخفیف در حال حاضر برای دوره ثبت شده"
+}
+
+export enum PaymentMessage {
+    AlreadyPayment="محصول قبلا خریداری شده",
+    bought="محصول با موفقعیت خریداری شد"
+}
+
+export enum OrderMessage {
+    NotFound="سفارش مورد نظر پیدا نشد"
 }
 
 export enum BasketMessage {

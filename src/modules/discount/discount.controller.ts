@@ -1,16 +1,15 @@
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { DiscountService } from './discount.service';
-import { AuthGuard } from '../auth/guard/auth.guard';
 import { CanAccess } from 'src/common/decorators/role.decorator';
 import { Roles } from 'src/common/enums/role.enum';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
 import { DiscountDto } from './dto/discount.dto';
+import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 
 @Controller('discount')
 @ApiTags("discount")
-@ApiBearerAuth("Authorization")
-@UseGuards(AuthGuard)
+@AuthDecorator()
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
   

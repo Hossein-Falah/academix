@@ -15,5 +15,8 @@ export enum EntityNames {
     Sesstion="sesstion",
     CourseComment="course_comment",
     Discount="discount",
-    Basket="basket"
+    Basket="basket",
+    Order="order",
+    OrderItem="order_item",
+    Payment="payment"
 }
