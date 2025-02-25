@@ -14,6 +14,7 @@ import { CourseCommentEntity } from "src/modules/course/entities/comment.entity"
 import { BasketEntity } from "src/modules/basket/entities/basket.entity";
 import { OrderEntity } from "src/modules/order/entities/order.entity";
 import { PaymentEntity } from "src/modules/payment/entities/payment.entity";
+import { TicketEntity } from "src/modules/ticket/entities/ticket.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity extends BaseEntity {
@@ -67,6 +68,8 @@ export class UserEntity extends BaseEntity {
     orders:OrderEntity[];
     @OneToMany(() => PaymentEntity, payment => payment.user)
     payments:PaymentEntity;
+    @OneToMany(() => TicketEntity, ticket => ticket.user)
+    tickets:TicketEntity[];
     @CreateDateColumn()
     created_at:Date;
     @UpdateDateColumn()

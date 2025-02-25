@@ -13,6 +13,7 @@ import { BasketModule } from '../basket/basket.module';
 import { PaymentModule } from '../payment/payment.module';
 import { OrderModule } from '../order/order.module';
 import { HttpApiModule } from '../http/http.module';
+import { TicketModule } from '../ticket/ticket.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { HttpApiModule } from '../http/http.module';
     BasketModule,
     PaymentModule,
     OrderModule,
-    HttpApiModule
+    HttpApiModule,
+    TicketModule
   ],
   controllers: [],
   providers: [],
