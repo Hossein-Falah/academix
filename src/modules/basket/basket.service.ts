@@ -8,11 +8,13 @@ import { BasketEntity } from './entities/basket.entity';
 import { CourseService } from '../course/services/course.service';
 import { BasketMessage, DiscountMessage } from 'src/common/enums/message.enum';
 import { DiscountService } from '../discount/discount.service';
+import { DiscountEntity } from '../discount/entities/discount.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BasketService {
   constructor(
     @InjectRepository(BasketEntity) private basketRepository:Repository<BasketEntity>,
+    @InjectRepository(DiscountEntity) private discountRepository:Repository<DiscountEntity>,
     @Inject(REQUEST) private request:Request,
     private courseService:CourseService,
     private discountService:DiscountService
@@ -137,6 +139,18 @@ export class BasketService {
       throw new BadRequestException(DiscountMessage.Expires_code);
     }
 
+    const existingBasketItem = await this.basketRepository.findOne({
+      where: {
+        userId,
+        courseId,
+        discountId: discount.id
+      }
+    });
+
+    if (existingBasketItem) {
+      throw new BadRequestException(DiscountMessage.AlreadyAppliedToCourse)
+    }
+
     const userBasketDiscount = await this.basketRepository.findOneBy({
       discountId: discount.id,
       userId
@@ -153,6 +167,9 @@ export class BasketService {
     });
 
     await this.basketRepository.save(basketItem);
+
+    discount.usege = (discount.usege || 0) + 1;
+    await this.discountRepository.save(discount);
 
     return {
       message: DiscountMessage.ApplyDiscount

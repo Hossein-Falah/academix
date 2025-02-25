@@ -11,6 +11,7 @@ import { BasketMessage, OrderMessage, PaymentMessage } from 'src/common/enums/me
 import { OrderService } from '../order/order.service';
 import { OrderStatus } from 'src/common/enums/status.enum';
 import { OrderEntity } from '../order/entities/order.entity';
+import { CourseStudentEntity } from '../course/entities/course-student.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class PaymentService {
@@ -18,6 +19,7 @@ export class PaymentService {
     @Inject(REQUEST) private request:Request,
     @InjectRepository(PaymentEntity) private paymentRepository:Repository<PaymentEntity>,
     @InjectRepository(OrderEntity) private orderRepository:Repository<OrderEntity>,
+    @InjectRepository(CourseStudentEntity) private courseStudentRepository:Repository<CourseStudentEntity>,
     private basketService:BasketService,
     private stripeService:StripeService,
     private orderService:OrderService
@@ -72,7 +74,11 @@ export class PaymentService {
       payment.status = true;
       await manager.save(payment);
 
-      const order = await manager.findOne(OrderEntity, { where: { id: payment.orderId }});
+      const order = await manager.findOne(OrderEntity, { 
+        where: { id: payment.orderId },
+        relations: ["items"]
+      });
+      
       if (!order) throw new NotFoundException(OrderMessage.NotFound);
       order.status = OrderStatus.Paid;
       await manager.save(order);
@@ -80,6 +86,16 @@ export class PaymentService {
       const userId = this.request.user.id;
 
       await this.basketService.clearBasket(userId);
+
+      const courseIds = order.items.map(item => item.courseId);
+      for (const courseId of courseIds) {
+        const courseStudent = this.courseStudentRepository.create({
+          userId,
+          courseId
+        });
+
+        await manager.save(courseStudent);
+      }
     });
 
     return {

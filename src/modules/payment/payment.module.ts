@@ -18,6 +18,7 @@ import { DiscountEntity } from '../discount/entities/discount.entity';
 import { CategoryEntity } from '../category/entities/category.entity';
 import { OrderService } from '../order/order.service';
 import { OrderEntity } from '../order/entities/order.entity';
+import { CourseStudentEntity } from '../course/entities/course-student.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { OrderEntity } from '../order/entities/order.entity';
       CourseCategoryEntity,
       DiscountEntity,
       CategoryEntity,
-      OrderEntity
+      OrderEntity,
+      CourseStudentEntity
     ])
   ],
   controllers: [PaymentController],
