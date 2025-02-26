@@ -113,6 +113,12 @@ export enum BadRequestMessage {
     InValidVideoFormat="اپلود کنید mp4 mov avi mkv لطفا ویدیو را با یکی از فرمت ها",
 }
 
+export enum TicketMessage {
+    created="تیکت جدید با موفقیعت ساخته شد",
+    Notfound="تیکت مورد نظر پیدا نشد",
+    ConflictTicket="همچین تیکتی قبلا ثبت شده لطفا تیکت جدید ثبت نمایید"
+}
+
 export enum ConflictMessage {
     AlreadyExistAccount="حساب کاربری با این مشخصات قبلا وجود دارد",
     AlreadyEmail="این ایمیل قبلا توسط شخصی دیگر استفاده شده",
