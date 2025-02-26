@@ -37,8 +37,9 @@ export class TicketController {
   }
 
   @Get("/admin")
+  @CanAccess(Roles.Admin, Roles.Teacher)
   findAllTicketForAdminOrTeacher() {
-
+    return this.ticketService.findAllTicketForAdminOrTeacher()
   }
 
   @Get(':id')

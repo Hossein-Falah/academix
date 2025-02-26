@@ -81,9 +81,19 @@ export class TicketService {
     const { user } = this.request;
     const query = this.ticketRepository.createQueryBuilder(EntityNames.Ticket)
       .where("ticket.userId = :userId", { userId: user.id })
-      .leftJoinAndSelect("ticket.messages", "messages")
+      .leftJoin("ticket.messages", "message")
+      .leftJoin("message.sender", "sender")
+      .leftJoin("sender.profile", "profile")
+      .addSelect([
+        "ticket.id", "ticket.title", "ticket.description",
+        "ticket.status", "ticket.priority",
+        "ticket.createdAt", "ticket.updatedAt",
+        "message.id", "message.message", "message.createdAt",
+        "sender.id", "sender.username", "sender.role",
+        "profile.id", "profile.nike_name", "profile.image_profile"
+      ])
       .orderBy('ticket.createdAt', "DESC")
-    
+
     const tickets = await query.getMany();
 
     if (!tickets.length) {
@@ -93,8 +103,29 @@ export class TicketService {
     return tickets;
   }
 
-  findAllTicketForAdminOrTeacher() {
+  async findAllTicketForAdminOrTeacher() {
+    const query = this.ticketRepository.createQueryBuilder(EntityNames.Ticket)
+      .where({})
+      .leftJoin("ticket.messages", "message")
+      .leftJoin("message.sender", "sender")
+      .leftJoin("sender.profile", "profile")
+      .addSelect([
+        "ticket.id", "ticket.title", "ticket.description",
+        "ticket.status", "ticket.priority",
+        "ticket.createdAt", "ticket.updatedAt",
+        "message.id", "message.message", "message.createdAt",
+        "sender.id", "sender.username", "sender.role",
+        "profile.id", "profile.nike_name", "profile.image_profile"
+      ])
+      .orderBy('ticket.createdAt', "DESC")
 
+    const tickets = await query.getMany();
+
+    if (!tickets.length) {
+      throw new NotFoundException(TicketMessage.Notfound)
+    }
+
+    return tickets;
   }
 
   async findOne(id: string) {
