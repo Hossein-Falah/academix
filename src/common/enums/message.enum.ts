@@ -116,7 +116,8 @@ export enum BadRequestMessage {
 export enum TicketMessage {
     created="تیکت جدید با موفقیعت ساخته شد",
     Notfound="تیکت مورد نظر پیدا نشد",
-    ConflictTicket="همچین تیکتی قبلا ثبت شده لطفا تیکت جدید ثبت نمایید"
+    ConflictTicket="همچین تیکتی قبلا ثبت شده لطفا تیکت جدید ثبت نمایید",
+    Removed="تیکت مورد نظر با موفقعیت حذف شد"
 }
 
 export enum ConflictMessage {

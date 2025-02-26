@@ -72,8 +72,14 @@ export class TicketService {
     return ticket;
   }
 
-  removeTicket(id:string) {
+  async removeTicket(id:string) {
+    const ticket = await this.findOne(id);
+    
+    await this.ticketRepository.delete({ id: ticket.id });
 
+    return {
+      message: TicketMessage.Removed
+    }
   }
 
   async checkExistTicketWithTitle(title:string) {

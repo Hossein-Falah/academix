@@ -4,6 +4,8 @@ import { TicketService } from './ticket.service';
 import { TicketDto } from './dto/ticket.dto';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
+import { CanAccess } from 'src/common/decorators/role.decorator';
+import { Roles } from 'src/common/enums/role.enum';
 
 @Controller('ticket')
 @ApiTags("Ticket")
@@ -43,6 +45,7 @@ export class TicketController {
   }
 
   @Delete('/remove/:id')
+  @CanAccess(Roles.Admin, Roles.Teacher)
   removeTicket(@Param('id') id: string) {
     return this.ticketService.removeTicket(id);
   }
