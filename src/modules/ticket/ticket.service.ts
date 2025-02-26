@@ -3,19 +3,20 @@ import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { TicketDto } from './dto/ticket.dto';
+import { ReplyTicketDto, TicketDto } from './dto/ticket.dto';
 import { TicketEntity } from './entities/ticket.entity';
 import { TicketMessageEntity } from './entities/ticket-message.entity';
 import { TicketPriority, TicketStatus } from 'src/common/enums/status.enum';
 import { TicketMessage } from 'src/common/enums/message.enum';
+import { EntityNames } from 'src/common/enums/entity.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TicketService {
   constructor(
-    @InjectRepository(TicketEntity) private ticketRepository:Repository<TicketEntity>,
-    @InjectRepository(TicketMessageEntity) private ticketMessageRepository:Repository<TicketMessageEntity>,
-    @Inject(REQUEST) private request:Request
-  ) {}
+    @InjectRepository(TicketEntity) private ticketRepository: Repository<TicketEntity>,
+    @InjectRepository(TicketMessageEntity) private ticketMessageRepository: Repository<TicketMessageEntity>,
+    @Inject(REQUEST) private request: Request
+  ) { }
 
   async create(ticketDto: TicketDto) {
     const { user } = this.request;
@@ -52,18 +53,50 @@ export class TicketService {
 
   }
 
-  replyToTicket() {
+  async replyToTicket(replyTicketDto: ReplyTicketDto) {
+    const { user } = this.request;
+    const { ticketId, message } = replyTicketDto;
 
+    const ticket = await this.ticketRepository.findOne({
+      where: { id: ticketId },
+      relations: ['messages']
+    });
+
+    if (!ticket) throw new NotFoundException(TicketMessage.Notfound);
+
+    const messageEntity = this.ticketMessageRepository.create({
+      message,
+      ticket,
+      sender: user
+    });
+
+    await this.ticketMessageRepository.save(messageEntity);
+
+    return {
+      message: TicketMessage.Answered
+    }
   }
 
-  findAllTicketForUser() {
+  async findAllTicketForUser() {
+    const { user } = this.request;
+    const query = this.ticketRepository.createQueryBuilder(EntityNames.Ticket)
+      .where("ticket.userId = :userId", { userId: user.id })
+      .leftJoinAndSelect("ticket.messages", "messages")
+      .orderBy('ticket.createdAt', "DESC")
+    
+    const tickets = await query.getMany();
 
+    if (!tickets.length) {
+      throw new NotFoundException(TicketMessage.Notfound)
+    }
+
+    return tickets;
   }
 
   findAllTicketForAdminOrTeacher() {
 
   }
-  
+
   async findOne(id: string) {
     const ticket = await this.ticketRepository.findOne({
       where: { id }
@@ -72,9 +105,9 @@ export class TicketService {
     return ticket;
   }
 
-  async removeTicket(id:string) {
+  async removeTicket(id: string) {
     const ticket = await this.findOne(id);
-    
+
     await this.ticketRepository.delete({ id: ticket.id });
 
     return {
@@ -82,7 +115,7 @@ export class TicketService {
     }
   }
 
-  async checkExistTicketWithTitle(title:string) {
+  async checkExistTicketWithTitle(title: string) {
     const ticket = await this.ticketRepository.findOneBy({ title });
     if (ticket) throw new ConflictException(TicketMessage.ConflictTicket);
   }

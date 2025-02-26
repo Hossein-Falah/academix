@@ -1,7 +1,7 @@
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { TicketService } from './ticket.service';
-import { TicketDto } from './dto/ticket.dto';
+import { ReplyTicketDto, TicketDto } from './dto/ticket.dto';
 import { AuthDecorator } from 'src/common/decorators/auth.decorator';
 import { SwaggerConsmes } from 'src/common/enums/swagger.consumes.enum';
 import { CanAccess } from 'src/common/decorators/role.decorator';
@@ -25,13 +25,15 @@ export class TicketController {
   }
 
   @Post("/reply-to-ticket/:id")
-  replyToTicket() {
-
+  @ApiConsumes(SwaggerConsmes.UrlEncoded, SwaggerConsmes.Json)
+  @CanAccess(Roles.Admin, Roles.Teacher)
+  replyToTicket(@Body() replyTicketDto:ReplyTicketDto) {
+    return this.ticketService.replyToTicket(replyTicketDto);
   }
 
   @Get("/user")
   findAllTicketForUser() {
-
+    return this.ticketService.findAllTicketForUser()
   }
 
   @Get("/admin")
