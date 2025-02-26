@@ -1,9 +1,9 @@
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { ReplyTicketDto, TicketDto } from './dto/ticket.dto';
+import { ReplyTicketDto, TicketDto, TicketStatusDto } from './dto/ticket.dto';
 import { TicketEntity } from './entities/ticket.entity';
 import { TicketMessageEntity } from './entities/ticket-message.entity';
 import { TicketPriority, TicketStatus } from 'src/common/enums/status.enum';
@@ -49,8 +49,20 @@ export class TicketService {
     }
   }
 
-  ticketStatusManagment() {
+  async ticketStatusManagment(ticketStatusDto:TicketStatusDto) {
+    const { ticketId, status } = ticketStatusDto;
 
+    const ticket = await this.findOne(ticketId);
+
+    const updateObject: DeepPartial<TicketEntity> = {
+      status: status || ticket.status
+    }
+
+    await this.ticketRepository.update({ id: ticketId }, updateObject);
+
+    return {
+      message: TicketMessage.ChangeStatus
+    }
   }
 
   async replyToTicket(replyTicketDto: ReplyTicketDto) {

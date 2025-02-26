@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
-import { TicketPriority } from "src/common/enums/status.enum";
+import { TicketPriority, TicketStatus } from "src/common/enums/status.enum";
 
 export class TicketDto {
     @ApiProperty()
@@ -32,4 +32,14 @@ export class ReplyTicketDto {
     @IsString()
     @IsNotEmpty()
     message: string;
+}
+
+export class TicketStatusDto {
+    @ApiProperty()
+    @IsUUID()
+    @IsNotEmpty()
+    ticketId: string;
+    @ApiProperty({ enum: TicketStatus })
+    @IsEnum(TicketStatus)
+    status:TicketStatus
 }

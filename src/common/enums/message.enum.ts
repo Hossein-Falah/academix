@@ -118,7 +118,8 @@ export enum TicketMessage {
     Notfound="تیکت مورد نظر پیدا نشد",
     ConflictTicket="همچین تیکتی قبلا ثبت شده لطفا تیکت جدید ثبت نمایید",
     Removed="تیکت مورد نظر با موفقعیت حذف شد",
-    Answered="تیکت با موفقعیت پاسخ داده شد"
+    Answered="تیکت با موفقعیت پاسخ داده شد",
+    ChangeStatus="وضعیت تیکت با موفقعیت تغییر کرد"
 }
 
 export enum ConflictMessage {
