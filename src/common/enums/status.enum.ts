@@ -11,12 +11,24 @@ export enum BlogStatus {
 export enum OrderStatus {
     Pending="pending",
     Canceled="canceled",
-    Paid="paid",
-    Done="done"
+    Paid="paid"
 }
 
 export enum OrderItemStatus {
     Pending="pending",
     Canceled="canceled",
-    Sent="sent"
+    Success="success"
+}
+
+export enum TicketStatus {
+    OPEN="open",
+    IN_PROGRESS="in_progress",
+    RESOLVED="resolved",
+    CLOSED="closed"
+}
+
+export enum TicketPriority {
+    LOW="low",
+    MEDIUM="medium",
+    HIGH="high"
 }

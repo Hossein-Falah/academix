@@ -18,5 +18,7 @@ export enum EntityNames {
     Basket="basket",
     Order="order",
     OrderItem="order_item",
-    Payment="payment"
+    Payment="payment",
+    Ticket="ticket",
+    TicketMessage="ticket_message"
 }
