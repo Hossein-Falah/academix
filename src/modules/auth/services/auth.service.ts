@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, Scope, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, forwardRef, Inject, Injectable, NotFoundException, Scope, UnauthorizedException } from '@nestjs/common';
 import { AuthDto } from '../dto/auth.dto';
 import { UserEntity } from '../../user/entities/user.entity';
 import { AuthResponse, GoogleStrategyType } from 'src/common/types';
@@ -18,6 +18,8 @@ import { CookiesOptionsToken } from 'src/common/utils/cookie.util';
 import { Roles } from 'src/common/enums/role.enum';
 import { ProfileEntity } from 'src/modules/user/entities/profile.entity';
 import { randomId } from 'src/common/utils/function.util';
+import { UserService } from 'src/modules/user/user.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
@@ -26,7 +28,9 @@ export class AuthService {
         @InjectRepository(OtpEntity) private otpRepository: Repository<OtpEntity>,
         @InjectRepository(ProfileEntity) private profileRepository: Repository<ProfileEntity>,
         @Inject(REQUEST) private request:Request,
-        private tokenService:TokenService
+        private tokenService:TokenService,
+        @Inject(forwardRef(() => UserService)) private userService:UserService,
+        private jwtService:JwtService
     ) {}
 
     async userExistence(authDto:AuthDto, res:Response) {
@@ -241,6 +245,24 @@ export class AuthService {
                 return username;
             default:
                 throw new UnauthorizedException(AuthMessage.UnAuthorizedInValid)
+        }
+    }
+
+    // authention user with passport for chat-system
+
+    async validateUser(username:string, password:string) {
+        const user = await this.userService.getUserWithUsername(username);
+        if (user && user.password === password) {
+            return user;
+        }
+
+        return null;
+    }
+
+    async LoginWithChat(user:UserEntity) {
+        const payload = { username: user.username, sub:user.id, role: user.role };
+        return {
+            access_token: this.jwtService.sign(payload)
         }
     }
 }

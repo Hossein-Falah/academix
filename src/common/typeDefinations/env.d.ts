@@ -38,5 +38,8 @@ namespace NodeJS {
         REDIS_HOST:string;
         REDIS_PORT:number;
         REDIS_PASSWORD:string;
+
+        // jwt module secret
+        JWT_SECRET_KEY:string;
     }
 }

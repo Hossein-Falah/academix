@@ -4,18 +4,19 @@ import { redisConfig } from "src/configs/redis.config";
 
 @Injectable()
 export class ChatService {
-    private publisher:Redis;
-    private subscriber:Redis;
+    private publisher: Redis;
+    private subscriber: Redis;
 
     constructor() {
         this.publisher = new Redis(redisConfig);
         this.subscriber = new Redis(redisConfig);
     }
 
-    async sendMessage(channel:string, senderId:string, message:string) {
+    async sendMessage(channel: string, senderId: string, senderRole: string, message: string) {
         const messageData = {
             senderId,
             message,
+            senderRole,
             timestamp: new Date().toISOString()
         };
 
@@ -26,7 +27,7 @@ export class ChatService {
         await this.publisher.publish(channel, JSON.stringify(messageData));
     }
 
-    async subscribeToChannel(channel:string, callback: (message:any) => void) {
+    async subscribeToChannel(channel: string, callback: (message: any) => void) {
         await this.subscriber.subscribe(channel);
         this.subscriber.on("message", (chan, msg) => {
             if (chan === channel) {
@@ -35,9 +36,12 @@ export class ChatService {
         })
     }
 
-    async getChatHistory(channel:string): Promise<any[]> {
+    async getChatHistory(channel: string, userId: string, role: string): Promise<any[]> {
         const messages = await this.publisher.lrange(`chat:${channel}`, 0, -1);
-        return messages.map(message => JSON.parse(message)).reverse();
+        return messages.map(message => JSON.parse(message))
+            .filter(message => {
+                return role === "admin" || role === "teacher" || role === "user" || message.senderId === userId
+            }).reverse()
     }
 
     async disconnect() {

@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { isDate } from 'class-validator';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
+import { BadRequestException, ConflictException, forwardRef, Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { ProfileDto, RoleChangeDto } from './dto/profile.dto';
 import { ProfileImage } from 'src/common/types';
 import { UserEntity } from './entities/user.entity';
@@ -27,7 +27,7 @@ export class UserService {
     @InjectRepository(ProfileEntity) private profileRepository: Repository<ProfileEntity>,
     @InjectRepository(OtpEntity) private otpRepository: Repository<OtpEntity>,
     @Inject(REQUEST) private request:Request,
-    private authService:AuthService,
+    @Inject(forwardRef(() => AuthService)) private authService:AuthService,
     private tokenService:TokenService
   ) {}
 
@@ -77,6 +77,17 @@ export class UserService {
       .where({ id })
       .leftJoinAndSelect("user.profile", "profile")
       .getOne()
+  }
+
+  async getProfileWithId(id:string) {
+    return this.userRepository.createQueryBuilder(EntityNames.User)
+      .where({ id })
+      .leftJoinAndSelect("user.profile", "profile")
+      .getOne()
+  }
+
+  async getUserWithUsername(username:string) {
+    return this.userRepository.findOneBy({ username });
   }
 
   async getAllUsers() {
