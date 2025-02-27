@@ -14,6 +14,7 @@ import { PaymentModule } from '../payment/payment.module';
 import { OrderModule } from '../order/order.module';
 import { HttpApiModule } from '../http/http.module';
 import { TicketModule } from '../ticket/ticket.module';
+import { SupportModule } from '../support/support.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { TicketModule } from '../ticket/ticket.module';
     PaymentModule,
     OrderModule,
     HttpApiModule,
-    TicketModule
+    TicketModule,
+    SupportModule
   ],
   controllers: [],
   providers: [],

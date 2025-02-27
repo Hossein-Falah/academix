@@ -2,8 +2,8 @@ namespace NodeJS {
     interface ProcessEnv {
         // application
         PORT: number;
-        BASE_URL:string;
-        
+        BASE_URL: string;
+
         // DataBase
         DB_PORT: number;
         DB_NAME: string;
@@ -33,5 +33,10 @@ namespace NodeJS {
         // payment Url
         STRIPE_SECRET_KEY:string;
         STRIPE_PUBLISHABLE_KEY:string;
+
+        // Redis Config
+        REDIS_HOST:string;
+        REDIS_PORT:number;
+        REDIS_PASSWORD:string;
     }
 }
