@@ -1,15 +1,15 @@
 import Redis from "ioredis";
 import { Injectable } from "@nestjs/common";
-import { redisConfig } from "src/configs/redis.config";
+import { redisPublisher, redisSubscriber } from "src/configs/redis.config";
 
 @Injectable()
 export class ChatService {
     private publisher: Redis;
-    private subscriber: Redis;
+    private subscriber: Redis ;
 
     constructor() {
-        this.publisher = new Redis(redisConfig);
-        this.subscriber = new Redis(redisConfig);
+        this.publisher = redisPublisher;
+        this.subscriber = redisSubscriber
     }
 
     async sendMessage(channel: string, senderId: string, senderRole: string, message: string) {
