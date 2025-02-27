@@ -37,7 +37,7 @@ export class UserEntity extends BaseEntity {
     @Column({ nullable: true, default: false })
     verify_phone:boolean
     @Column({ nullable: true })
-    password:true;
+    password:string;
     @Column({ nullable: true })
     otpId:string;
     @Column({ nullable: true })
