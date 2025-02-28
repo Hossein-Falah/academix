@@ -1,99 +1,213 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Academix 
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### **About**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Academix API is a backend service designed for managing educational platforms. Built with NestJS, this API provides a robust and scalable solution for handling users, courses, blogs, orders, and payment systems. It follows a modular architecture, ensuring flexibility and easy expansion based on educational needs.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🚀 Key Features  
 
-## Project setup
+### 🔒 Authentication & Authorization  
+- **JWT-based Authentication**: Secure login with JSON Web Tokens.  
+- **Google OAuth Integration**: Sign in easily with your Google account.  
 
+### 👤 User Management  
+- Register, login, update profiles, and manage email/password changes.  
+- **Role-based Access Control**: Different permissions for students, instructors, and admins.  
+
+### 📚 Course & Content Management  
+- Create and manage interactive courses.  
+- Organize lessons and chapters with ease.  
+- Assign categories to keep content structured.  
+
+### ✍️ Blog System  
+- Full **CRUD** operations for blog posts.  
+- User comments with admin moderation for quality control.  
+
+### 🛒 E-commerce & Payment  
+- Shopping cart and order management for course purchases.  
+- **Coupon & Discount System**: Flexible pricing strategies.  
+- Secure payment processing (integrate with payment gateways, e.g., Stripe or PayPal, via NestJS services).
+
+### 🧰 Support & Ticketing System  
+- Users can create support tickets.  
+- Admins can manage and respond efficiently.  
+
+### 💬 Real-time Chat System  
+- Live messaging between users and instructors.  
+- **WebSocket-based**: Fast, real-time communication.  
+
+---
+
+## 🛠️ Technologies  
+Academix is built using modern, industry-standard technologies to ensure performance, scalability, and maintainability:  
+- **Framework**: NestJS (Node.js framework for building efficient, reliable server-side applications).  
+- **Language**: TypeScript (for type safety and better code maintainability).  
+- **Real-time Communication**: Socket.IO (for real-time chat and notifications).  
+- **Database**: MySQL (managed via TypeORM for ORM and query optimization).  
+- **Authentication**: JSON Web Token (JWT) and Passport.js (for secure and flexible authentication strategies).  
+- **API Documentation**: Swagger (OpenAPI) for interactive and clear API documentation.  
+- **Cloud Hosting**: AWS (for deployment, scaling, and high availability—e.g., EC2, RDS for MySQL, S3 for file storage, if applicable).  
+- **ORM**: TypeORM (for database modeling and migrations).  
+- **Dependencies**: Managed via `package.json` (install with `npm install`).
+
+---
+
+## 📋 Prerequisites  
+Before setting up Academix, ensure you have the following installed:  
+- **Node.js 16+** or higher.  
+- **npm** (Node Package Manager, usually comes with Node.js).  
+- **MySQL Server** (for the database—ensure it’s running locally or on AWS RDS).  
+- **AWS CLI** (for AWS deployment and configuration, if applicable).  
+- **Git** for cloning the repository.  
+- Dependencies listed in `package.json` (install with `npm install`)
+
+---
+
+# Preview Academix
+
+![screen shot](./screencapture.png)
+
+---
+
+## 🏃 Installation  
+
+Follow these steps to set up Academix locally:  
+
+### 1. Clone the Repository  
 ```bash
-$ npm install
+git clone https://github.com/Hossein-Falah/academix.git
+cd academix  
 ```
 
-## Compile and run the project
-
+### 2. Install Dependencies  
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install  
 ```
 
-## Run tests
+### 3. Set Up Environment Variables  
+Create a `.env` file in the root directory and add your configuration:
+```env
+# Server Configuration
+PORT=3000
+BASE_URL=http://localhost:3000
 
+# Database Configuration
+DB_PORT=3306
+DB_NAME=academix
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
+DB_HOST=your_db_host
+
+# Authentication Secrets
+ACCESS_TOKEN_SECRET=your_access_token_secret
+OTP_TOKEN_SECRET=your_otp_token_secret
+EMAIL_TOKEN_SECRET=your_email_token_secret
+PHONE_TOKEN_SECRET=your_phone_token_secret
+COOKIE_SECRET=your_cookie_secret
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google.redirect
+
+# AWS S3 or Object Storage
+S3_BUCKET_NAME=your_s3_bucket_name
+S3_ACCESS_KEY=your_s3_access_key
+S3_SECRET_KEY=your_s3_secret_key
+S3_ENDPOINT=your_s3_endpoint
+
+# Stripe Payment Gateway
+STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# JWT Secret
+JWT_SECRET_KEY=your_jwt_secret_key
+
+```
+(Customize based on your MySQL, AWS, and authentication configurations.)
+
+### 4. Configure MySQL Database  
+Create a MySQL database named `academix_db` (or as specified in `.env`).
+Run TypeORM migrations to set up the schema:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx typeorm migration:run  
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 5. Run the Application  
+Start the NestJS server in development mode:
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run start:dev  
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 6. Access the API  
+View the Swagger documentation at [http://localhost:3000/swagger](http://localhost:3000/swagger) (or your configured port) to explore and test endpoints.
 
-## Resources
+## 📖 Usage  
+Academix provides a rich API for interacting with its features. Here’s how to get started:
 
-Check out a few resources that may come in handy when working with NestJS:
+### Example: Authenticating a User  
+- Send a POST request to `/auth/user-existence` to check if a user exists.
+- Log in with `/auth/check-login` using JWT or Passport strategies (e.g., Google OAuth).
+- Use the token to access protected routes like `/user/profile`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Example: Creating a Course  
+- Authenticate as an instructor.
+- Send a POST request to `/course` with course details (e.g., title, description, category).
+- Manage real-time interactions (e.g., chat) via Socket.IO endpoints.
 
-## Support
+Refer to the Swagger UI for all available endpoints, request/response schemas, and example payloads.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📝 API Documentation  
+Academix’s API is fully documented using Swagger (OpenAPI). Access the interactive documentation at:
+- **Local:** [http://localhost:3000/swagger](http://localhost:3000/swagger) (after running the app).
+- **Online:** (If deployed on AWS, provide the public URL here.)
 
-## Stay in touch
+The Swagger UI includes:
+- All endpoints (e.g., Auth, User, Course, Blog, Payment, etc.).
+- HTTP methods (GET, POST, PUT, DELETE).
+- Request/response schemas for each endpoint, including authentication (JWT/Passport) and real-time features (Socket.IO).
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🤝 Contributing  
+We welcome contributions to enhance Academix! Here’s how you can help:
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature/your-feature`.
+3. Make your changes and commit: `git commit -m "Add feature: Your description"`.
+4. Push to your branch: `git push origin feature/your-feature`.
+5. Open a Pull Request with a detailed description of your changes.
 
-## License
+Please follow our `CONTRIBUTING.md` (create this file if needed) for guidelines.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🌍 Deployment on AWS  
+To deploy Academix on AWS:
+- **Database:** Use AWS RDS for MySQL to host your database, ensuring scalability and backups.
+- **Backend:** Deploy the NestJS app on AWS EC2, Elastic Beanstalk, or Lambda.
+- **Real-time Communication:** Configure Socket.IO with AWS services (e.g., Elastic Load Balancer or API Gateway for WebSocket support).
+- **File Storage:** Use AWS S3 for storing course materials, blog images, and other uploads (if Multer is integrated).
+- **API Gateway:** Optionally, use AWS API Gateway for routing and scaling API requests.
+- **Load Balancing & Scaling:** Configure AWS ELB and Auto Scaling for high availability.
+- **Environment Variables:** Securely manage `.env` variables using AWS Secrets Manager or Parameter Store.
+
+Ensure proper CI/CD pipelines (e.g., using AWS CodePipeline or GitHub Actions) for automated deployments.
+
+## 📜 License  
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## 📧 Contact  
+Have questions or suggestions? Get in touch:
+- **Email:** hosseinfalah2021@gmail.com
+- **Email:** hosseinfalah.work@gmail.com
+- **X:** [@HosseinFalah10](https://x.com/HosseinFalah10)
+- **GitHub Issues:** Open an issue in this repository for bugs or feature requests.
+
+## ❤️ Acknowledgments  
+- Thanks to the NestJS, TypeScript, Socket.IO, and AWS communities for their incredible tools.
+- Special appreciation for Swagger, TypeORM, Passport, and JWT for enabling secure and efficient development.
+
+⭐ **Star this repo if you find Academix useful!** ⭐
